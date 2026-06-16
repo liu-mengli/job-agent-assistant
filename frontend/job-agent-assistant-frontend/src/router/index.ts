@@ -1,13 +1,18 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import MainLayout from '../layouts/MainLayout.vue'
 import Home from '../views/Home.vue'
+import Weather from '../views/Weather.vue'
 import Login from '../views/Login.vue'
 
 const routes = [
   {
     path: '/',
-    name: 'Home',
-    component: Home,
+    component: MainLayout,
     meta: { requiresAuth: true },
+    children: [
+      { path: '', name: 'Home', component: Home },
+      { path: 'weather', name: 'Weather', component: Weather },
+    ],
   },
   {
     path: '/login',

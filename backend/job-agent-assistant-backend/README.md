@@ -13,6 +13,9 @@
 | bcrypt | 密码哈希（加盐 + 慢哈希） |
 | PyJWT | JWT 签发与验签 |
 | loguru | 结构化日志（彩色终端 + JSON 文件轮转） |
+| langchain-openai | DeepSeek 大模型接入（OpenAI 兼容协议） |
+| langgraph | Agent 工作流框架（StateGraph） |
+| langgraph-checkpoint-postgres | 对话历史持久化到 PostgreSQL（待接入） |
 
 ## 配置文件
 
@@ -31,19 +34,21 @@
 4. 搭建 FastAPI 应用骨架，配置 CORS 允许前端跨域访问
 5. 路由分层：`main.py` 只做应用组装，业务路由按模块拆分到 `api/` 目录
 6. 健康检查接口 `GET /api/v1/health`
-7. 配置升级为 `pydantic-settings`：`Settings` 类做类型校验，启动即报错，业务模块通过 `settings.XXX` 读取
+7. 配置升级为 `pydantic-settings`：`Settings` 类做类型校验，启动即报错
 8. 生成 `requirements.txt`，锁定依赖版本
-9. API 响应统一格式：`ApiResponse` 模型，所有接口返回 `{ code, data, message }` 结构
-10. 全局异常处理器：参数校验失败（422）和未捕获异常（500）均包装为统一格式
-11. 登录接口 `POST /api/v1/auth/login`，从数据库查询用户并校验密码
-12. 接入 PostgreSQL，配置 SQLAlchemy 异步引擎 + 会话工厂 + `get_db` 依赖注入
+9. API 响应统一格式：`ApiResponse` 模型，`{ code, data, message }` 结构
+10. 全局异常处理器：422 和 500 均包装为统一格式
+11. 登录接口 `POST /api/v1/auth/login`，数据库查询 + bcrypt 校验
+12. 接入 PostgreSQL，SQLAlchemy 异步引擎 + 会话工厂 + `get_db` 依赖注入
 13. 创建 User 表（id / username / password），启动时自动建表
 14. bcrypt 密码哈希（随机盐 + 12 轮迭代），密码不存明文
-15. 启动时自动种子数据：插入默认管理员 `admin / 123456`
-16. lifespan 管理数据库连接生命周期，启动初始化、关闭释放
-17. JWT 认证：登录签发 Token，`get_current_user` 依赖保护接口，过期/伪造自动 401
-18. WebSocket 双向通信通道：JWT 鉴权握手、统一消息协议（6 种类型）、连接管理（重复连接清理 + 发送异常保护）、心跳保活、流式回复模拟
-19. 日志系统（loguru）：request_id 全链路追踪（contextualize）、HTTP/WS/异常/lifespan 全覆盖、开发彩色终端 + 生产 JSON 轮转
+15. 启动时自动种子数据：`admin / 123456`
+16. lifespan 管理数据库连接生命周期
+17. JWT 认证：登录签发 Token，`get_current_user` 依赖保护接口
+18. WebSocket 双向通信通道：JWT 握手、统一消息协议、连接管理、心跳保活
+19. 日志系统（loguru）：request_id 全链路追踪、HTTP/WS/异常/lifespan 全覆盖
+20. LangGraph + DeepSeek 天气查询 Demo：StateGraph、add_messages 多轮对话、Mock 数据
+21. `POST /api/v1/chat` 聊天接口：认证保护、多轮上下文、请求日志、LLM 超时
 
 ## 文件结构
 
@@ -54,27 +59,31 @@ backend/job-agent-assistant-backend/
 ├── .venv/                 # Python 虚拟环境
 ├── README.md
 ├── requirements.txt       # 项目依赖清单
-├── config.py              # Settings 类 + settings 实例，类型校验，读取 .env
-├── main.py                # 应用组装入口（lifespan、全局异常处理、路由挂载）
+├── config.py              # pydantic-settings 集中管理
+├── main.py                # 应用组装入口（lifespan、异常处理、路由挂载）
 └── api/
     ├── __init__.py
-    ├── auth.py            # 登录 + JWT 签发 / GET /auth/me 用户信息
-    ├── database.py        # SQLAlchemy 引擎 + 会话工厂 + 自动建表 + 种子数据
-    ├── dependencies.py    # get_current_user 认证依赖（Bearer Token 提取 + 验签）
-    ├── health.py          # 健康检查路由
+    ├── auth.py            # 登录 + JWT 签发 / GET /auth/me
+    ├── chat.py            # 聊天接口（调用 LangGraph，认证 + 日志）
+    ├── database.py        # SQLAlchemy 引擎 + 会话 + 自动建表 + 种子数据
+    ├── dependencies.py    # get_current_user 认证依赖
+    ├── health.py          # 健康检查
     ├── log.py             # 日志配置中心（loguru）
-    ├── middleware.py       # RequestId 中间件（contextualize 注入）
-    ├── router.py          # v1 路由汇总（含 WebSocket）
-    ├── security.py        # bcrypt 密码哈希 / JWT 签发 / JWT 解析
+    ├── middleware.py       # RequestId 中间件（contextualize）
+    ├── router.py          # v1 路由汇总
+    ├── security.py        # bcrypt / JWT 签发 / JWT 解析
+    ├── agent/
+    │   ├── __init__.py
+    │   └── graph.py       # LangGraph 天气助手（State + Node + Graph）
     ├── models/
-    │   ├── __init__.py    # 模型导出
+    │   ├── __init__.py
     │   └── user.py        # User 表
     ├── ws/
     │   ├── __init__.py
     │   ├── protocol.py    # 消息协议（6 种消息类型）
-    │   ├── manager.py     # 连接管理器（按 user_id 索引）
-    │   └── chat.py        # WS 端点（JWT 验签 + 消息分发）
+    │   ├── manager.py     # 连接管理器
+    │   └── chat.py        # WS 端点
     └── schemas/
         ├── __init__.py
-        └── response.py    # ApiResponse 统一响应格式
+        └── response.py    # ApiResponse 统一格式
 ```
