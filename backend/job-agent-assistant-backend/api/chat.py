@@ -1,7 +1,7 @@
 import time
 
 from fastapi import APIRouter, Depends
-from langchain_core.messages import HumanMessage
+from langchain_core.messages import HumanMessage, AIMessage
 from pydantic import BaseModel
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -14,9 +14,14 @@ from api.schemas.response import ApiResponse
 router = APIRouter()
 
 
+class ChatMessage(BaseModel):
+    role: str
+    content: str
+
+
 class ChatRequest(BaseModel):
     input: str
-    messages: list[dict] = []  # 前端传来的历史消息
+    messages: list[ChatMessage] = []  # 前端传来的完整历史
 
 
 @router.post("/chat", response_model=ApiResponse)
@@ -25,12 +30,17 @@ async def chat(
     user_id: int = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
 ):
-    """调用 LangGraph 天气助手，支持多轮对话"""
+    """调用 LangGraph 求职助手，支持多轮对话"""
     start = time.time()
 
-    # 将前端传来的历史消息转为 LangChain HumanMessage
-    history = [HumanMessage(content=m["content"]) for m in body.messages if m["role"] == "user"]
-    # 加上本次用户输入
+    # 将前端传来的完整历史转为 LangChain 消息对象
+    history = []
+    for m in body.messages:
+        if m.role == "user":
+            history.append(HumanMessage(content=m.content))
+        elif m.role == "assistant":
+            history.append(AIMessage(content=m.content))
+    # 追加本次用户输入
     history.append(HumanMessage(content=body.input))
 
     result = await graph.ainvoke({"messages": history})

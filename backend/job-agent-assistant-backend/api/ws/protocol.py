@@ -13,6 +13,7 @@ class MessageType(StrEnum):
     CHAT_REQUEST = "chat.request"
     CHAT_STREAM = "chat.stream"
     CHAT_DONE = "chat.done"
+    CHAT_BUSY = "chat.busy"      # Agent 正忙，拒绝新请求
     # 心跳
     PING = "ping"
     PONG = "pong"

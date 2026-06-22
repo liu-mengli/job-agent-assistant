@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import MainLayout from '../layouts/MainLayout.vue'
 import Home from '../views/Home.vue'
 import Weather from '../views/Weather.vue'
+import JobAssistant from '../views/JobAssistant.vue'
 import Login from '../views/Login.vue'
 
 const routes = [
@@ -12,6 +13,7 @@ const routes = [
     children: [
       { path: '', name: 'Home', component: Home },
       { path: 'weather', name: 'Weather', component: Weather },
+      { path: 'job-assistant', name: 'JobAssistant', component: JobAssistant },
     ],
   },
   {

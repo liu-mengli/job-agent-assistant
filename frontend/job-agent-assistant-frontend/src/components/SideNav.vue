@@ -6,6 +6,7 @@ const route = useRoute()
 const items = [
   { path: '/', label: '仪表盘', icon: '⌂' },
   { path: '/weather', label: '天气助手', icon: '☀' },
+  { path: '/job-assistant', label: '求职助手', icon: '💼' },
 ]
 </script>
 

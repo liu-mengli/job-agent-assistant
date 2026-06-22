@@ -25,16 +25,27 @@ class ConnectionManager:
     def is_connected(self, user_id: int) -> bool:
         return user_id in self._connections
 
-    async def send_json(self, message, user_id: int):
-        """向指定用户发送消息（带异常保护）"""
+    async def send_json(self, message, user_id: int) -> bool:
+        """向指定用户发送消息（按 user_id 查找连接），返回 True 表示发送成功"""
         ws = self._connections.get(user_id)
         if ws is None:
-            return
+            return False
+        return await self._send_to_ws(message, ws, user_id)
+
+    async def send_json_to(self, message, ws: WebSocket) -> bool:
+        """向指定 WebSocket 对象发送消息（连接被顶替后不会发错对象）"""
+        return await self._send_to_ws(message, ws, user_id=None)
+
+    async def _send_to_ws(self, message, ws: WebSocket, user_id: int | None) -> bool:
+        """底层发送，user_id 为 None 时不断开连接"""
         try:
             data = message if isinstance(message, str) else message.json()
             await ws.send_text(data)
+            return True
         except Exception:
-            self.disconnect(user_id)
+            if user_id is not None:
+                self.disconnect(user_id)
+            return False
 
     async def send_system(self, msg_type, user_id: int, payload=None):
         from api.ws.protocol import system_message
