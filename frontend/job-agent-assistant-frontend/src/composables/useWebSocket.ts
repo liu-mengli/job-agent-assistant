@@ -1,4 +1,5 @@
 import { ref } from 'vue'
+import apiClient from '../api/client'
 
 type MessageHandler = (payload: any) => void
 
@@ -12,12 +13,33 @@ const closeCallbacks: Array<(event: CloseEvent) => void> = []
 
 const connected = ref(false)
 const error = ref<string | null>(null)
+const sessionId = ref<string | null>(null)
 
-function connect() {
-  const token = sessionStorage.getItem('token')
-  if (!token || ws) return
+async function connect() {
+  const jwt = sessionStorage.getItem('token')
+  if (!jwt || ws) return
 
-  ws = new WebSocket(`${WS_BASE}/ws/chat?token=${token}`)
+  // 优先复用 sessionStorage 中保存的会话 ID（断线重连不换会话），
+  // 无则生成新 UUID（首次连接或主动新建会话后）
+  sessionId.value = sessionStorage.getItem('sessionId') || crypto.randomUUID()
+  sessionStorage.setItem('sessionId', sessionId.value!)
+
+  try {
+    // ① 通过安全 HTTP 请求换取一次性 WS 票据（JWT 在请求头里，不进 URL）
+    const data = await apiClient.post('/ws/ticket') as { ticket: string }
+    const ticket = data.ticket
+
+    // ② 用票据 + session_id 建立 WebSocket 连接（URL 里只暴露短期一次性票据）
+    ws = new WebSocket(`${WS_BASE}/ws/chat?ticket=${ticket}&session_id=${sessionId.value}`)
+  } catch (err: any) {
+    error.value = '获取连接票据失败'
+    // 如果是 401（Token 过期），交给 client.ts 拦截器跳登录；
+    // 其他错误（网络不通等）延迟重试
+    if (err?.response?.status !== 401) {
+      setTimeout(() => connect(), 5000)
+    }
+    return
+  }
 
   ws.onopen = () => {
     connected.value = true
@@ -43,11 +65,11 @@ function connect() {
     connected.value = false
     if (pingTimer) clearInterval(pingTimer)
     ws = null
-    // 通知所有注册的断连回调（用于页面清理未完成的消息等）
+    // 通知所有注册的断连回调
     closeCallbacks.forEach((cb) => cb(event))
     // 1000: 主动断开  1001: 服务端踢出（新连接顶替），不应自动重连
     if (event.code !== 1000 && event.code !== 1001 && sessionStorage.getItem('token')) {
-      setTimeout(connect, 5000)
+      setTimeout(() => { connect().catch(() => { }) }, 5000)
     }
   }
 }
@@ -70,11 +92,20 @@ function off(type: string, handler: MessageHandler) {
   if (list) handlers.set(type, list.filter((h) => h !== handler))
 }
 
+function newSession() {
+  // 清除旧会话 ID，下次 connect 会生成新的
+  sessionStorage.removeItem('sessionId')
+  sessionId.value = null
+  disconnect()
+  connect()
+}
+
 function disconnect() {
   if (pingTimer) clearInterval(pingTimer)
   ws?.close(1000)
   ws = null
   connected.value = false
+  // 不清除 sessionId —— 断线重连后复用同一会话
 }
 
 function onClose(cb: (event: CloseEvent) => void) {
@@ -88,5 +119,5 @@ function offClose(cb: (event: CloseEvent) => void) {
 
 // 注意：这里不创建新实例，每次返回同一个单例
 export function useWebSocket() {
-  return { connected, error, connect, send, on, off, onClose, offClose, disconnect }
+  return { connected, error, sessionId, connect, newSession, send, on, off, onClose, offClose, disconnect }
 }

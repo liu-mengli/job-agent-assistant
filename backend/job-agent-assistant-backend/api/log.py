@@ -11,7 +11,7 @@ _logger.remove()
 _logger.add(
     sys.stdout,
     colorize=True,
-    format="<green>{time:HH:mm:ss}</green> | <level>{level: <8}</level> | <cyan>[{extra[request_id]:>3}]</cyan> | <level>{message}</level>",
+    format="<green>{time:HH:mm:ss}</green> | <level>{level: <8}</level> | <cyan>[{extra[request_id]}]</cyan><magenta>[{extra[session_id]}]</magenta> | <level>{message}</level>",
     level="DEBUG" if settings.DEBUG else "INFO",
 )
 
@@ -26,7 +26,7 @@ _logger.add(
 )
 
 # 业务模块统一入口（request_id 默认 "-"，由中间件通过 contextualize 覆盖）
-_logger.configure(extra={"request_id": "-"})
+_logger.configure(extra={"request_id": "-", "session_id": "-"})
 logger = _logger
 
 __all__ = ["logger"]

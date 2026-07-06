@@ -2,54 +2,58 @@ from fastapi import WebSocket
 
 
 class ConnectionManager:
-    """管理活跃 WebSocket 连接，按 user_id 索引"""
+    """管理活跃 WebSocket 连接，按 (user_id, session_id) 索引"""
 
     def __init__(self):
-        self._connections: dict[int, WebSocket] = {}
+        self._connections: dict[tuple[int, str], WebSocket] = {}
 
-    async def connect(self, user_id: int, ws: WebSocket):
-        # 重复连接时先清理旧连接，避免僵尸连接泄漏
-        old = self._connections.pop(user_id, None)
+    async def connect(self, user_id: int, session_id: str, ws: WebSocket):
+        # 同一 (user_id, session_id) 再次连接时踢旧连接，不同 session 互不影响
+        key = (user_id, session_id)
+        old = self._connections.pop(key, None)
         if old:
             try:
-                await old.close(code=1001, reason="新连接顶替")
+                await old.close(code=1001, reason="同会话新连接顶替")
             except Exception:
                 pass
 
         await ws.accept()
-        self._connections[user_id] = ws
+        self._connections[key] = ws
 
-    def disconnect(self, user_id: int):
-        self._connections.pop(user_id, None)
+    def disconnect(self, user_id: int, session_id: str, ws: WebSocket):
+        """仅在字典中的连接与 ws 是同一对象时才移除（防止僵尸连接误删）"""
+        key = (user_id, session_id)
+        if self._connections.get(key) is ws:
+            self._connections.pop(key, None)
 
-    def is_connected(self, user_id: int) -> bool:
-        return user_id in self._connections
+    def is_connected(self, user_id: int, session_id: str) -> bool:
+        return (user_id, session_id) in self._connections
 
-    async def send_json(self, message, user_id: int) -> bool:
-        """向指定用户发送消息（按 user_id 查找连接），返回 True 表示发送成功"""
-        ws = self._connections.get(user_id)
+    async def send_json(self, message, user_id: int, session_id: str) -> bool:
+        """向指定会话发送消息，返回 True 表示发送成功"""
+        ws = self._connections.get((user_id, session_id))
         if ws is None:
             return False
-        return await self._send_to_ws(message, ws, user_id)
+        return await self._send_to_ws(message, ws, user_id, session_id)
 
     async def send_json_to(self, message, ws: WebSocket) -> bool:
         """向指定 WebSocket 对象发送消息（连接被顶替后不会发错对象）"""
-        return await self._send_to_ws(message, ws, user_id=None)
+        return await self._send_to_ws(message, ws, user_id=None, session_id=None)
 
-    async def _send_to_ws(self, message, ws: WebSocket, user_id: int | None) -> bool:
-        """底层发送，user_id 为 None 时不断开连接"""
+    async def _send_to_ws(self, message, ws: WebSocket, user_id: int | None, session_id: str | None) -> bool:
+        """底层发送，user_id/session_id 为 None 时不断开连接"""
         try:
             data = message if isinstance(message, str) else message.json()
             await ws.send_text(data)
             return True
         except Exception:
-            if user_id is not None:
-                self.disconnect(user_id)
+            if user_id is not None and session_id is not None:
+                self.disconnect(user_id, session_id, ws)
             return False
 
-    async def send_system(self, msg_type, user_id: int, payload=None):
+    async def send_system(self, msg_type, user_id: int, session_id: str, payload=None):
         from api.ws.protocol import system_message
-        await self.send_json(system_message(msg_type, payload), user_id)
+        await self.send_json(system_message(msg_type, payload), user_id, session_id)
 
     @property
     def online_count(self) -> int:

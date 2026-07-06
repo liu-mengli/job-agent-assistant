@@ -28,11 +28,15 @@ const router = createRouter({
   routes,
 })
 
-// 路由守卫：未登录跳转到登录页
-router.beforeEach((to) => {
+// 路由守卫：未登录跳登录，已登录访问登录页跳主页
+router.beforeEach((to, from, next) => {
   const token = sessionStorage.getItem('token')
   if (to.meta.requiresAuth && !token) {
-    return '/login'
+    next({ name: 'Login' })
+  } else if (to.name === 'Login' && token) {
+    next({ name: 'Home' })
+  } else {
+    next()
   }
 })
 

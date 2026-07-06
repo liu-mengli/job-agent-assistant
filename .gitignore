@@ -31,6 +31,9 @@ poetry.lock
 # Logs
 logs/
 
+# Uploaded files
+uploads/
+
 # Vector DB
 chroma_data/
 

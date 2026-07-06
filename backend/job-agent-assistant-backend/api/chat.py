@@ -3,10 +3,8 @@ import time
 from fastapi import APIRouter, Depends
 from langchain_core.messages import HumanMessage, AIMessage
 from pydantic import BaseModel
-from sqlalchemy.ext.asyncio import AsyncSession
 
-from api.agent.graph import graph
-from api.database import get_db
+from api.agent.graph import get_graph
 from api.dependencies import get_current_user
 from api.log import logger
 from api.schemas.response import ApiResponse
@@ -28,7 +26,6 @@ class ChatRequest(BaseModel):
 async def chat(
     body: ChatRequest,
     user_id: int = Depends(get_current_user),
-    db: AsyncSession = Depends(get_db),
 ):
     """调用 LangGraph 求职助手，支持多轮对话"""
     start = time.time()
@@ -43,7 +40,7 @@ async def chat(
     # 追加本次用户输入
     history.append(HumanMessage(content=body.input))
 
-    result = await graph.ainvoke({"messages": history})
+    result = await get_graph().ainvoke({"messages": history})
     reply = result["messages"][-1].content
 
     elapsed = (time.time() - start) * 1000

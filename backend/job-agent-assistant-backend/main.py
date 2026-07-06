@@ -1,4 +1,10 @@
+import sys
 from contextlib import asynccontextmanager
+
+# Windows 下 psycopg 异步需要 SelectorEventLoop
+if sys.platform == "win32":
+    import asyncio
+    asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
 
 from api.log import logger
 from config import settings  # 确保 .env 在所有业务代码之前加载完毕
@@ -7,6 +13,7 @@ from fastapi import FastAPI, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+from psycopg_pool import AsyncConnectionPool
 
 from api.database import init_db, engine
 from api.router import v1_router
@@ -19,9 +26,30 @@ async def lifespan(app: FastAPI):
     logger.info("应用启动，初始化数据库...")
     await init_db()
     logger.info("数据库初始化完成")
+
+    # 创建 psycopg 异步连接池，供 AsyncPostgresSaver + RAG 检索使用
+    pool = AsyncConnectionPool(settings.PG_URL, open=False)
+    await pool.open()
+    logger.info("AsyncConnectionPool 已创建")
+
+    # 创建 resume_chunks 表（向量切片表，由 psycopg 管理）
+    from api.rag.store import ensure_table
+    await ensure_table(pool)
+
+    # 预热 embedding 模型（首次自动下载 ~100MB）
+    from api.rag.embedder import get_model
+    get_model()
+    logger.info(f"Embedding 模型已加载: {settings.EMBEDDING_MODEL}")
+
+    # 初始化 Graph（含 AsyncPostgresSaver checkpointer + search_resume tool）
+    from api.agent.graph import init_graph
+    await init_graph(pool)
+
     yield
-    # 关闭时：释放数据库连接池
-    logger.info("应用关闭，释放数据库连接...")
+
+    # 关闭时：释放连接池和数据库连接
+    logger.info("应用关闭，释放资源...")
+    await pool.close()
     await engine.dispose()
 
 
