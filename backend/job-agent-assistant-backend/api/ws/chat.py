@@ -139,6 +139,22 @@ async def websocket_chat(
                         # 仅在流式完整结束时推送完成信号 + 写入会话元数据
                         if streaming_ok:
                             await _upsert_session(user_id, session_id, content)
+
+                            # 尝试提取结构化输出
+                            try:
+                                final_state = await get_graph().aget_state(
+                                    {"configurable": {"thread_id": session_id}}
+                                )
+                                if final_state and final_state.values:
+                                    structured = final_state.values.get("structured_content")
+                                    if structured and isinstance(structured, dict) and structured.get("response_type"):
+                                        await manager.send_system(
+                                            MessageType.CHAT_STRUCTURED, user_id, session_id,
+                                            payload=structured,
+                                        )
+                            except Exception:
+                                logger.exception("获取结构化输出失败")
+
                             await manager.send_system(MessageType.CHAT_DONE, user_id, session_id)
 
                     except Exception:

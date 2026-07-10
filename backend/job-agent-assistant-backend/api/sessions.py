@@ -73,3 +73,36 @@ async def get_session_messages(
         "title": session.title,
         "messages": messages,
     })
+
+
+@router.delete("/sessions/{session_id}", response_model=ApiResponse)
+async def delete_session(
+    session_id: str,
+    user_id: int = Depends(get_current_user),
+    db=Depends(get_db),
+):
+    """永久删除某个会话（sessions 记录 + checkpoint 状态）"""
+    result = await db.execute(
+        select(Session).where(
+            Session.session_id == session_id,
+            Session.user_id == user_id,
+        )
+    )
+    session = result.scalar()
+    if session is None:
+        return ApiResponse(code=404, message="会话不存在")
+
+    # 删除 LangGraph checkpoint 状态（3 张表，按 thread_id = session_id）
+    from api.agent.graph import get_pool
+    pool = get_pool()
+    async with pool.connection() as conn:
+        for table in ("checkpoint_writes", "checkpoint_blobs", "checkpoints"):
+            await conn.execute(
+                f"DELETE FROM {table} WHERE thread_id = %s",
+                (session_id,),
+            )
+
+    await db.delete(session)
+    await db.commit()
+    logger.info(f"会话已删除 user={user_id} session={session_id}")
+    return ApiResponse(message="已删除")

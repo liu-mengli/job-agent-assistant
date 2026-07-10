@@ -20,3 +20,7 @@ export async function fetchSessions(): Promise<{ sessions: SessionItem[] }> {
 export async function fetchSessionMessages(sessionId: string): Promise<SessionDetail> {
   return apiClient.get(`/sessions/${sessionId}`) as Promise<SessionDetail>
 }
+
+export async function deleteSession(sessionId: string): Promise<void> {
+  return apiClient.delete(`/sessions/${sessionId}`)
+}

@@ -73,12 +73,48 @@ async def search(
             "AND rc.embedding <=> %s::vector < %s::float "
             "ORDER BY distance "
             "LIMIT %s::integer",
-            (user_id, query_vec, query_vec, settings.RETRIEVAL_THRESHOLD, top_k),
+            (query_vec, user_id, query_vec, settings.RETRIEVAL_THRESHOLD, top_k),
         )
         rows = await cur.fetchall()
 
     # 拼接章节标签到结果中，LLM 可溯源
     return [f"【{row[1]}】{row[0]}" if row[1] else row[0] for row in rows]
+
+
+async def search_jobs(
+    pool: AsyncConnectionPool,
+    query_embedding: np.ndarray,
+    top_k: int | None = None,
+) -> list[dict]:
+    """检索岗位：pgvector 语义相似度 + 结构化字段"""
+    if top_k is None:
+        top_k = settings.RETRIEVAL_TOP_K
+
+    query_vec = query_embedding.astype(np.float32).tolist()
+
+    async with pool.connection() as conn:
+        await register_vector_async(conn)
+        cur = await conn.execute(
+            "SELECT title, salary_range, experience, education, company_name, description, url "
+            "FROM job_listings "
+            "ORDER BY embedding <=> %s::vector "
+            "LIMIT %s::integer",
+            (query_vec, top_k),
+        )
+        rows = await cur.fetchall()
+
+    return [
+        {
+            "title": r[0],
+            "salary": r[1],
+            "experience": r[2],
+            "education": r[3],
+            "company": r[4],
+            "description": r[5],
+            "url": r[6],
+        }
+        for r in rows
+    ]
 
 
 async def delete_document(pool: AsyncConnectionPool, document_id: int) -> None:

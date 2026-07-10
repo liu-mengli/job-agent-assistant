@@ -76,26 +76,49 @@
 31. 首次进入页面：有历史会话 → 自动加载最新；无历史 → 使用当前 WS sessionId
 
 ### 简历上传与管理
-32. 输入框旁 📎 上传按钮（`<input type="file" accept=".pdf">`）
-33. 上传期间侧边栏显示实时计时器「解析中... Xs」
-34. 简历列表展示文件名 + 删除按钮
-35. 上传前自动删除旧简历（每用户限 1 份）
+32. 输入框旁 📎 上传按钮（`<input type="file" accept=".pdf">`），已有简历时自动禁用
+33. 上传后异步后台处理：前端立即收到 `status: processing`，轮询至 `ready` 后刷新列表
+34. 上传期间侧边栏显示实时计时器「解析中... Xs」
+35. 简历列表展示文件名 + 删除按钮，processing 状态简历不显示在列表中
+36. 上传前自动删除旧简历（每用户限 1 份）
+37. 上传期间禁用输入框和发送按钮，防止消息与简历状态交叉混乱
 
 ### 求职助手（JobAssistant.vue）
-36. WS 流式对话 UI：预埋空 assistant 气泡 → `chat.stream` 逐 token 追加 → `chat.done` 解锁
-37. 多轮对话上下文由后端 checkpoint 自动恢复，前端不再传完整 history
-38. 断连清理：流式回复中 WS 断开 → 删除未完成消息对 → 补 `[连接中断]` 通知
-39. 非发送过程断连提示：code 1001（被其他页面顶替）时显示提示
-40. 发送失败回滚：`ws.send()` 返回 `false` 时 pop 预埋消息对
-41. 并发拒绝处理：后端 Agent 正忙时 `chat.busy` → 回滚 + 系统通知 + 解锁
-42. system 角色消息：黄色居中样式，不与对话气泡混淆
-43. token 追加健壮性：`onStream` 从后往前查找 assistant 消息
-44. LLM 调用工具时前端实时显示"（正在检索简历...）"
+38. WS 流式对话 UI：预埋空 assistant 气泡 → `chat.stream` 逐 token 追加 → `chat.done` 解锁
+39. 多轮对话上下文由后端 checkpoint 自动恢复，前端不再传完整 history
+40. 断连清理：流式回复中 WS 断开 → 删除未完成消息对 → 补 `[连接中断]` 通知
+41. 非发送过程断连提示：code 1001（被其他页面顶替）时显示提示
+42. 发送失败回滚：`ws.send()` 返回 `false` 时 pop 预埋消息对
+43. 并发拒绝处理：后端 Agent 正忙时 `chat.busy` → 回滚 + 系统通知 + 解锁
+44. system 角色消息：黄色居中样式，不与对话气泡混淆
+45. token 追加健壮性：`onStream` 从后往前查找 assistant 消息
+46. LLM 调用工具时前端实时显示"（正在检索...）"
+
+### Agent 智能工作流（后端 Prompt 驱动）
+47. 双模式自动路由：浏览模式（「看看岗位」→ 简洁岗位表）vs 全流程推荐（「推荐适合我的」→ 匹配度+评估+下一步）
+48. 岗位匹配度分析：匹配百分比 + 技能逐项对比表 + 优势短板 + 投递建议
+49. 简历优化建议：5 维度分析（突出经历/关键词/弱描述/删减建议/优化示例），严禁虚构
+50. 打招呼语与自我介绍：基于简历生成招呼语 + 面试自我介绍 + 个人优势话术
+51. 新用户引导：无简历时正常服务，尾部温和提醒，不阻塞不重复
+
+### 会话管理增强
+52. 会话卡片 hover 显示删除按钮：默认 `⋯` → hover 切换红色「删除」按钮
+53. 删除当前活跃会话时自动切换到最新会话并加载消息
+
+### 求职偏好设置
+54. 侧边栏「⚙ 求职偏好」按钮 → 弹出 Modal 表单
+55. 10 个可选字段：城市、工作模式（下拉）、薪资范围（元/月）、行业、公司规模、技术方向、经验年限、求职状态（下拉）、排除条件
+56. `fetchPreferences()` / `savePreferences()` 对接后端 API
+57. 偏好数据注入 Agent System Prompt，影响岗位推荐和匹配分析
+### 结构化输出渲染
+58. `chat.structured` WS 事件处理：接收后端结构化 JSON，附加到对应 assistant 消息的 `structured` 字段
+59. `StructuredMessage.vue`：根据 `response_type` 渲染不同组件——`browse`/`full_recommendation` 岗位表格（含匹配度彩色徽章）、`match_analysis` 环形匹配度分数 + 技能对比表（✅匹配/⚠️部分/❌缺失高亮行）
+60. 回退机制：无 `structured` 数据时纯文本正常展示；有结构化数据时原文本降为次要展示（小字号灰色）
 
 ### 环境与配置
-45. 环境变量：`.env.development` / `.env.production` + `env.d.ts` 类型声明
-46. WebSocket 代理：Vite 开发服务器 `ws://` 转发到后端 `/ws/chat`
-47. 路由守卫：未登录 → 跳登录页 / 已登录访问登录页 → 跳主页
+61. 环境变量：`.env.development` / `.env.production` + `env.d.ts` 类型声明
+62. WebSocket 代理：Vite 开发服务器 `ws://` 转发到后端 `/ws/chat`
+63. 路由守卫：未登录 → 跳登录页 / 已登录访问登录页 → 跳主页
 
 ## 文件结构
 
@@ -114,12 +137,15 @@ frontend/job-agent-assistant-frontend/
     ├── style.css          # 全局样式（Apple 字体栈）
     ├── env.d.ts           # 环境变量类型声明
     ├── api/
-    │   ├── client.ts      # Axios（Token 自动附加 / ApiResponse 解包 / 401 跳登录）
-    │   ├── health.ts      # GET /health
-    │   ├── auth.ts        # POST /auth/login + GET /auth/me
-    │   ├── chat.ts        # POST /chat（HTTP 备用）
-    │   ├── sessions.ts    # GET /sessions（会话列表）+ GET /sessions/{id}（消息历史）
-    │   └── resumes.ts     # POST /resumes/upload + GET /resumes + DELETE /resumes/{id}
+    │   ├── client.ts       # Axios（Token 自动附加 / ApiResponse 解包 / 401 跳登录）
+    │   ├── health.ts       # GET /health
+    │   ├── auth.ts         # POST /auth/login + GET /auth/me
+    │   ├── chat.ts         # POST /chat（HTTP 备用）
+    │   ├── sessions.ts     # GET /sessions + GET /sessions/{id} + DELETE /sessions/{id}
+    │   ├── resumes.ts      # POST /resumes/upload + GET /resumes + DELETE /resumes/{id}（含 status / error_message）
+    │   └── preferences.ts  # GET /preferences + PUT /preferences
+    ├── types/
+    │   └── structured.ts   # StructuredContent 类型定义（与后端 Pydantic 模型对应）
     ├── router/
     │   └── index.ts       # 嵌套路由（MainLayout → 子页面）+ 全局守卫
     ├── stores/
@@ -127,12 +153,13 @@ frontend/job-agent-assistant-frontend/
     ├── layouts/
     │   └── MainLayout.vue # 毛玻璃 Header + SideNav + <router-view>
     ├── components/
-    │   └── SideNav.vue    # 左侧导航栏（仪表盘/天气助手/求职助手）
+    │   ├── SideNav.vue    # 左侧导航栏（仪表盘/天气助手/求职助手）
+    │   └── StructuredMessage.vue  # 结构化响应渲染（岗位表格 / 匹配度分析）
     ├── views/
     │   ├── Login.vue      # 登录页
     │   ├── Home.vue       # 仪表盘（状态卡片）
     │   ├── Weather.vue    # 天气助手（HTTP 聊天对话框）
-    │   └── JobAssistant.vue # 求职助手（WS 流式聊天 + 会话侧边栏 + 简历上传 + token 显示 + 断连/并发防护）
+    │   └── JobAssistant.vue # 求职助手（WS 流式聊天 + 会话侧边栏（含删除）+ 简历异步上传 + 偏好设置 + 断连/并发防护）
     ├── composables/
     │   └── useWebSocket.ts  # WS 单例（sessionId 持久化 + newSession + ticket 换票 + 心跳 + 重连）
     └── assets/            # 静态资源

@@ -4,6 +4,8 @@ export interface ResumeItem {
   id: number
   filename: string
   chunk_count: number
+  status: string
+  error_message: string | null
   created_at: string
 }
 

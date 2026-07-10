@@ -5,6 +5,7 @@ from api.ws.chat import router as ws_router
 from api.chat import router as chat_router
 from api.sessions import router as sessions_router
 from api.resumes import router as resumes_router
+from api.preferences import router as preferences_router
 
 # 汇总所有 v1 子路由
 v1_router = APIRouter(prefix="/api/v1")
@@ -14,3 +15,4 @@ v1_router.include_router(ws_router)
 v1_router.include_router(chat_router)
 v1_router.include_router(sessions_router)
 v1_router.include_router(resumes_router)
+v1_router.include_router(preferences_router)

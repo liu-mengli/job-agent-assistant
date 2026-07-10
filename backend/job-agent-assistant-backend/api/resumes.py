@@ -29,14 +29,14 @@ async def upload_resume(
     file: UploadFile = File(...),
     user_id: int = Depends(get_current_user),
 ):
-    """上传 PDF 简历：解析 → 切片 → 向量化 → 入库（每用户限 1 份）"""
+    """上传 PDF 简历：先存文件并立即返回，后台异步处理 OCR + 向量化"""
     if not file.filename or not file.filename.lower().endswith(".pdf"):
         return ApiResponse(code=400, message="仅支持 PDF 文件")
 
     from api.agent.graph import get_pool
     pool = get_pool()
 
-    # 1. 删除用户的旧简历（数据 + 文件）
+    # 1. 删除用户的旧简历（避免新旧共存）
     async with pool.connection() as conn:
         cur = await conn.execute(
             "SELECT id FROM resume_documents WHERE user_id = %s", (user_id,)
@@ -45,59 +45,84 @@ async def upload_resume(
             old_id = row[0]
             await delete_document(pool, old_id)
             await conn.execute("DELETE FROM resume_documents WHERE id = %s", (old_id,))
-            # 清理旧磁盘文件
             for f in os.listdir(settings.UPLOAD_DIR):
                 if f.endswith(".pdf"):
                     os.remove(os.path.join(settings.UPLOAD_DIR, f))
                     break
 
+    # 2. 保存 PDF 文件
     save_name = f"{uuid4().hex}.pdf"
     save_path = os.path.join(settings.UPLOAD_DIR, save_name)
+    content = await file.read()
+    with open(save_path, "wb") as f:
+        f.write(content)
+
+    # 3. 先插入一条 processing 状态的记录，立即返回给前端
+    async with pool.connection() as conn:
+        cur = await conn.execute(
+            "INSERT INTO resume_documents (user_id, filename, chunk_count, status) "
+            "VALUES (%s, %s, 0, 'processing') RETURNING id",
+            (user_id, file.filename),
+        )
+        row = await cur.fetchone()
+        doc_id = row[0]
+
+    logger.info(f"简历上传已接收 user={user_id} file={file.filename} doc_id={doc_id}")
+
+    # 4. 后台异步处理：OCR → 切片 → 向量化 → 入库
+    asyncio.create_task(
+        _process_resume_background(doc_id, user_id, save_path, file.filename, pool)
+    )
+
+    return ApiResponse(
+        data={"id": doc_id, "filename": file.filename, "chunk_count": 0, "status": "processing"}
+    )
+
+
+async def _process_resume_background(
+    doc_id: int,
+    user_id: int,
+    save_path: str,
+    filename: str,
+    pool,
+) -> None:
+    """后台任务：OCR → 切片 → 向量化 → 入库 → 更新状态 → 注入 checkpoint 通知"""
+    from api.agent.graph import get_graph
 
     try:
-        content = await file.read()
-        with open(save_path, "wb") as f:
-            f.write(content)
+        logger.info(f"后台处理开始 doc_id={doc_id} file={filename}")
 
         loop = asyncio.get_running_loop()
         text = await loop.run_in_executor(None, parse_pdf, save_path)
         if not text.strip():
-            if os.path.exists(save_path):
-                os.remove(save_path)
-            return ApiResponse(code=400, message="PDF 中未检测到文本内容")
+            await _update_resume_status(pool, doc_id, "error", "PDF 中未检测到文本内容")
+            return
 
         chunks = split_text(text)
         if not chunks:
-            if os.path.exists(save_path):
-                os.remove(save_path)
-            return ApiResponse(code=400, message="文本切片后无内容")
+            await _update_resume_status(pool, doc_id, "error", "文本切片后无内容")
+            return
 
         texts = [c["content"] for c in chunks]
         embeddings = await loop.run_in_executor(None, embed, texts)
 
-        async with pool.connection() as conn:
-            cur = await conn.execute(
-                "INSERT INTO resume_documents (user_id, filename, chunk_count) "
-                "VALUES (%s, %s, %s) RETURNING id",
-                (user_id, file.filename, len(chunks)),
-            )
-            row = await cur.fetchone()
-            doc_id = row[0]
-
         await insert_chunks(pool, doc_id, chunks, embeddings)
-        logger.info(f"简历上传完成 user={user_id} file={file.filename} chunks={len(chunks)}")
 
-        # 向该用户所有已有会话的 checkpoint 注入简历失效提示，
-        # 防止 LLM 在后续对话中依赖历史里的旧简历检索结果
+        async with pool.connection() as conn:
+            await conn.execute(
+                "UPDATE resume_documents SET chunk_count = %s, status = 'ready' WHERE id = %s",
+                (len(chunks), doc_id),
+            )
+        logger.info(f"后台处理完成 doc_id={doc_id} file={filename} chunks={len(chunks)}")
+
+        # 向该用户所有已有会话注入简历失效提示
         try:
-            from api.agent.graph import get_graph
-
             graph = get_graph()
             async with pool.connection() as conn:
                 cur = await conn.execute(
                     "SELECT session_id FROM sessions WHERE user_id = %s", (user_id,)
                 )
-                session_ids = [row[0] for row in await cur.fetchall()]
+                session_ids = [r[0] for r in await cur.fetchall()]
 
             notice = AIMessage(
                 content=(
@@ -116,12 +141,17 @@ async def upload_resume(
         except Exception:
             logger.exception("注入简历失效提示失败（不影响上传主流程）")
 
-        return ApiResponse(data={"id": doc_id, "filename": file.filename, "chunk_count": len(chunks)})
-
     except Exception:
-        if os.path.exists(save_path):
-            os.remove(save_path)
-        raise
+        logger.exception(f"后台处理失败 doc_id={doc_id}")
+        await _update_resume_status(pool, doc_id, "error", "服务器处理简历时出错")
+
+
+async def _update_resume_status(pool, doc_id: int, status: str, error_message: str | None = None) -> None:
+    async with pool.connection() as conn:
+        await conn.execute(
+            "UPDATE resume_documents SET status = %s, error_message = %s WHERE id = %s",
+            (status, error_message, doc_id),
+        )
 
 
 @router.get("/resumes", response_model=ApiResponse)
@@ -142,6 +172,8 @@ async def list_resumes(
                 "id": r.id,
                 "filename": r.filename,
                 "chunk_count": r.chunk_count,
+                "status": getattr(r, "status", "ready"),
+                "error_message": getattr(r, "error_message", None),
                 "created_at": r.created_at.isoformat(),
             }
             for r in rows

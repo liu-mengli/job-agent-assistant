@@ -14,6 +14,7 @@ class MessageType(StrEnum):
     CHAT_STREAM = "chat.stream"
     CHAT_DONE = "chat.done"
     CHAT_BUSY = "chat.busy"      # Agent 正忙，拒绝新请求
+    CHAT_STRUCTURED = "chat.structured"  # 结构化 JSON 输出
     # 心跳
     PING = "ping"
     PONG = "pong"
