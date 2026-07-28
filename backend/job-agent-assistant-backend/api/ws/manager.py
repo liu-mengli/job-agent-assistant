@@ -8,15 +8,8 @@ class ConnectionManager:
         self._connections: dict[tuple[int, str], WebSocket] = {}
 
     async def connect(self, user_id: int, session_id: str, ws: WebSocket):
-        # 同一 (user_id, session_id) 再次连接时踢旧连接，不同 session 互不影响
+        # 旧连接不主动踢除，让它自然超时断开，避免连锁重连
         key = (user_id, session_id)
-        old = self._connections.pop(key, None)
-        if old:
-            try:
-                await old.close(code=1001, reason="同会话新连接顶替")
-            except Exception:
-                pass
-
         self._connections[key] = ws
 
     def disconnect(self, user_id: int, session_id: str, ws: WebSocket):
