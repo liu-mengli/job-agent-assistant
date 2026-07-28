@@ -404,6 +404,11 @@ async function scrollToBottom() {
   padding: 6px 14px;
   max-width: 90%;
 }
+.chat-bubble.system .msg-text {
+  line-height: 1.4;
+  display: flex;
+  align-items: center;
+}
 
 .chat-bubble.typing {
   opacity: 0.5;

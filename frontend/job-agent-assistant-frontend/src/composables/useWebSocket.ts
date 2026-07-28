@@ -5,6 +5,17 @@ type MessageHandler = (payload: any) => void
 
 const WS_BASE = import.meta.env.VITE_WS_BASE_URL
 
+// HTTP（非 HTTPS）下 crypto.randomUUID 不可用，手动生成 UUID v4
+function generateUUID(): string {
+  if (typeof crypto !== 'undefined' && crypto.randomUUID) {
+    return crypto.randomUUID()
+  }
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+    const r = (Math.random() * 16) | 0
+    return (c === 'x' ? r : (r & 0x3) | 0x8).toString(16)
+  })
+}
+
 // --- 模块级单例，所有组件共享同一个连接 ---
 let ws: WebSocket | null = null
 let pingTimer: ReturnType<typeof setInterval> | null = null
@@ -21,7 +32,7 @@ async function connect() {
 
   // 优先复用 sessionStorage 中保存的会话 ID（断线重连不换会话），
   // 无则生成新 UUID（首次连接或主动新建会话后）
-  sessionId.value = sessionStorage.getItem('sessionId') || crypto.randomUUID()
+  sessionId.value = sessionStorage.getItem('sessionId') || generateUUID()
   sessionStorage.setItem('sessionId', sessionId.value!)
 
   try {

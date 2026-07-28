@@ -12,6 +12,7 @@ services:
     environment:
       CORS_ORIGINS: "http://38.76.180.225"
       HF_HUB_OFFLINE: "0"
+      HF_ENDPOINT: "https://huggingface.co"
 
   nginx:
     build:
