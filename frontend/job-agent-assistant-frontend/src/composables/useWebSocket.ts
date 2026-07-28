@@ -5,7 +5,6 @@ type MessageHandler = (payload: any) => void
 
 const WS_BASE = import.meta.env.VITE_WS_BASE_URL
 
-// HTTP（非 HTTPS）下 crypto.randomUUID 不可用，手动生成 UUID v4
 function generateUUID(): string {
   if (typeof crypto !== 'undefined' && crypto.randomUUID) {
     return crypto.randomUUID()
@@ -16,9 +15,10 @@ function generateUUID(): string {
   })
 }
 
-// --- 模块级单例，所有组件共享同一个连接 ---
+// --- 模块级单例 ---
 let ws: WebSocket | null = null
 let pingTimer: ReturnType<typeof setInterval> | null = null
+let reconnectTimer: ReturnType<typeof setTimeout> | null = null
 const handlers = new Map<string, MessageHandler[]>()
 const closeCallbacks: Array<(event: CloseEvent) => void> = []
 
@@ -26,35 +26,35 @@ const connected = ref(false)
 const error = ref<string | null>(null)
 const sessionId = ref<string | null>(null)
 
-let connecting = false  // 防止并发连接
-let connectVersion = 0  // 版本号，解决异步并发问题
+let connecting = false
+let connectVersion = 0
 
-async function connect() {
+function scheduleReconnect() {
+  if (reconnectTimer) clearTimeout(reconnectTimer)
+  if (!localStorage.getItem('token')) return
+  reconnectTimer = setTimeout(() => { connect().catch(() => {}) }, 1000)
+}
+
+async function connect(targetSessionId?: string) {
   const jwt = localStorage.getItem('token')
-  if (!jwt || ws || connecting) return
+  if (!jwt) return
+  if (ws || connecting) return
+
   connecting = true
   const myVersion = ++connectVersion
 
-  // 优先复用 sessionStorage 中保存的会话 ID（断线重连不换会话），
-  // 无则生成新 UUID（首次连接或主动新建会话后）
-  sessionId.value = sessionStorage.getItem('sessionId') || generateUUID()
+  // 初始连接始终生成新 ID，避免新旧 WS 冲突；切换会话时传 targetSessionId 复用
+  sessionId.value = targetSessionId || generateUUID()
   sessionStorage.setItem('sessionId', sessionId.value!)
 
   try {
-    // ① 通过安全 HTTP 请求换取一次性 WS 票据（JWT 在请求头里，不进 URL）
     const data = await apiClient.post('/ws/ticket') as { ticket: string }
-    const ticket = data.ticket
-
-    // ② 用票据 + session_id 建立 WebSocket 连接（URL 里只暴露短期一次性票据）
-    if (myVersion !== connectVersion) return  // 已被更新的连接覆盖，丢弃当前票据
-    ws = new WebSocket(`${WS_BASE}/ws/chat?ticket=${ticket}&session_id=${sessionId.value}`)
+    if (myVersion !== connectVersion) { connecting = false; return }
+    ws = new WebSocket(`${WS_BASE}/ws/chat?ticket=${data.ticket}&session_id=${sessionId.value}`)
   } catch (err: any) {
-    if (myVersion !== connectVersion) return  // 已被更新的连接覆盖
+    if (myVersion !== connectVersion) { connecting = false; return }
     connecting = false
-    error.value = '获取连接票据失败'
-    if (err?.response?.status !== 401) {
-      setTimeout(() => connect(), 5000)
-    }
+    if (err?.response?.status !== 401) scheduleReconnect()
     return
   }
 
@@ -69,26 +69,24 @@ async function connect() {
       const msg = JSON.parse(event.data)
       const callbacks = handlers.get(msg.type) || []
       callbacks.forEach((fn) => fn(msg.payload))
-    } catch {
-      // 忽略非 JSON 消息
-    }
+    } catch { /* ignore */ }
   }
 
   ws.onerror = () => {
-    error.value = 'WebSocket 连接异常'
+    if (myVersion !== connectVersion) return
+    // WS 构造函数阶段失败（非 1000/1001），立即重试
+    if (!connected.value) scheduleReconnect()
   }
 
   ws.onclose = (event) => {
     connected.value = false
     if (pingTimer) clearInterval(pingTimer)
     ws = null
-    // 通知所有注册的断连回调
     closeCallbacks.forEach((cb) => cb(event))
-    // 1000: 主动断开  1001: 服务端踢出（新连接顶替），不应自动重连
+    if (myVersion !== connectVersion) return
+    // 异常断开（非主动关闭、非被踢）才重连
     if (event.code !== 1000 && event.code !== 1001 && localStorage.getItem('token')) {
-      if (connectVersion === myVersion) {  // 只有最新版本才重连
-        setTimeout(() => { connect().catch(() => { }) }, 5000)
-      }
+      scheduleReconnect()
     }
   }
 
@@ -114,7 +112,6 @@ function off(type: string, handler: MessageHandler) {
 }
 
 function newSession() {
-  // 清除旧会话 ID，下次 connect 会生成新的
   sessionStorage.removeItem('sessionId')
   sessionId.value = null
   disconnect()
@@ -122,24 +119,20 @@ function newSession() {
 }
 
 function disconnect() {
-  connecting = false  // 取消进行中的连接
+  connecting = false
+  if (reconnectTimer) clearTimeout(reconnectTimer)
   if (pingTimer) clearInterval(pingTimer)
   ws?.close(1000)
   ws = null
   connected.value = false
-  // 不清除 sessionId —— 断线重连后复用同一会话
 }
 
-function onClose(cb: (event: CloseEvent) => void) {
-  closeCallbacks.push(cb)
-}
-
+function onClose(cb: (event: CloseEvent) => void) { closeCallbacks.push(cb) }
 function offClose(cb: (event: CloseEvent) => void) {
   const idx = closeCallbacks.indexOf(cb)
   if (idx !== -1) closeCallbacks.splice(idx, 1)
 }
 
-// 注意：这里不创建新实例，每次返回同一个单例
 export function useWebSocket() {
   return { connected, error, sessionId, connect, newSession, send, on, off, onClose, offClose, disconnect }
 }

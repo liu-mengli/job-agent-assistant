@@ -210,7 +210,7 @@ async function switchToSession(sessionId: string) {
 
   // 重连 WS 以切换后端 session/thread
   ws.disconnect()
-  ws.connect()
+  ws.connect(sessionId)
 }
 
 async function handleNewSession() {

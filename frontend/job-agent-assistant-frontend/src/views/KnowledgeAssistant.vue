@@ -76,7 +76,7 @@ async function switchToSession(sessionId: string) {
   }
 
   ws.disconnect()
-  ws.connect()
+  ws.connect(sessionId)
 }
 
 async function handleNewSession() {
