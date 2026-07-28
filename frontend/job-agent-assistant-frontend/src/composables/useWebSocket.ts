@@ -27,11 +27,13 @@ const error = ref<string | null>(null)
 const sessionId = ref<string | null>(null)
 
 let connecting = false  // 防止并发连接
+let connectVersion = 0  // 版本号，解决异步并发问题
 
 async function connect() {
   const jwt = localStorage.getItem('token')
   if (!jwt || ws || connecting) return
   connecting = true
+  const myVersion = ++connectVersion
 
   // 优先复用 sessionStorage 中保存的会话 ID（断线重连不换会话），
   // 无则生成新 UUID（首次连接或主动新建会话后）
@@ -44,8 +46,10 @@ async function connect() {
     const ticket = data.ticket
 
     // ② 用票据 + session_id 建立 WebSocket 连接（URL 里只暴露短期一次性票据）
+    if (myVersion !== connectVersion) return  // 已被更新的连接覆盖，丢弃当前票据
     ws = new WebSocket(`${WS_BASE}/ws/chat?ticket=${ticket}&session_id=${sessionId.value}`)
   } catch (err: any) {
+    if (myVersion !== connectVersion) return  // 已被更新的连接覆盖
     connecting = false
     error.value = '获取连接票据失败'
     if (err?.response?.status !== 401) {
@@ -82,7 +86,9 @@ async function connect() {
     closeCallbacks.forEach((cb) => cb(event))
     // 1000: 主动断开  1001: 服务端踢出（新连接顶替），不应自动重连
     if (event.code !== 1000 && event.code !== 1001 && localStorage.getItem('token')) {
-      setTimeout(() => { connect().catch(() => { }) }, 5000)
+      if (connectVersion === myVersion) {  // 只有最新版本才重连
+        setTimeout(() => { connect().catch(() => { }) }, 5000)
+      }
     }
   }
 
@@ -116,6 +122,7 @@ function newSession() {
 }
 
 function disconnect() {
+  connecting = false  // 取消进行中的连接
   if (pingTimer) clearInterval(pingTimer)
   ws?.close(1000)
   ws = null
