@@ -1,0 +1,1161 @@
+{
+  "terms": [
+    {
+      "category": "页面/模块",
+      "en": "Run Page",
+      "zh": "生產執行操作頁面"
+    },
+    {
+      "category": "页面/模块",
+      "en": "User Page",
+      "zh": "作業員操作頁面"
+    },
+    {
+      "category": "页面/模块",
+      "en": "Setup Page",
+      "zh": "設定工程師操作頁面"
+    },
+    {
+      "category": "页面/模块",
+      "en": "Engineer Page",
+      "zh": "系統工程師操作頁面"
+    },
+    {
+      "category": "功能/参数",
+      "en": "Lot Done",
+      "zh": "清除總計"
+    },
+    {
+      "category": "功能/参数",
+      "en": "Lot Information",
+      "zh": "生產資訊設定"
+    },
+    {
+      "category": "功能/参数",
+      "en": "Output Tray Map",
+      "zh": "輸出料盤映射"
+    },
+    {
+      "category": "功能/参数",
+      "en": "Input Tray Map",
+      "zh": "輸入料盤映射"
+    },
+    {
+      "category": "功能/参数",
+      "en": "Yield Control",
+      "zh": "良率控制設定"
+    },
+    {
+      "category": "功能/参数",
+      "en": "Offset Setting",
+      "zh": "各軸位置修正設定"
+    },
+    {
+      "category": "功能/参数",
+      "en": "Site Setting",
+      "zh": "測試設定"
+    },
+    {
+      "category": "功能/参数",
+      "en": "IO Monitor",
+      "zh": "IO 監視器"
+    },
+    {
+      "category": "功能/参数",
+      "en": "Motor Monitor",
+      "zh": "馬達監視"
+    },
+    {
+      "category": "功能/参数",
+      "en": "Alignment",
+      "zh": "位置校正"
+    },
+    {
+      "category": "功能/参数",
+      "en": "Contact Setting",
+      "zh": "手測與壓貨高度設定"
+    },
+    {
+      "category": "功能/参数",
+      "en": "Event Log",
+      "zh": "事件記錄"
+    },
+    {
+      "category": "功能/参数",
+      "en": "Device Setting",
+      "zh": "測試設備與設定"
+    },
+    {
+      "category": "功能/参数",
+      "en": "Pin1 Check Function",
+      "zh": "CCD功能開啟"
+    },
+    {
+      "category": "功能/参数",
+      "en": "SLT Test Program",
+      "zh": "通訊介面資料設定"
+    },
+    {
+      "category": "功能/参数",
+      "en": "Cobra",
+      "zh": "溫度控制設定"
+    },
+    {
+      "category": "功能/参数",
+      "en": "Tester Setup",
+      "zh": "手動測試"
+    },
+    {
+      "category": "功能/参数",
+      "en": "Tray Change Move Out",
+      "zh": "換盤測試"
+    },
+    {
+      "category": "功能/参数",
+      "en": "Parament",
+      "zh": "參數設定"
+    },
+    {
+      "category": "功能/参数",
+      "en": "Speed Setting",
+      "zh": "手臂速度設定"
+    },
+    {
+      "category": "功能/参数",
+      "en": "Timer Setting",
+      "zh": "時間設定"
+    },
+    {
+      "category": "功能/参数",
+      "en": "Tray File",
+      "zh": "料盤資料"
+    },
+    {
+      "category": "功能/参数",
+      "en": "Category Setup",
+      "zh": "分類設定"
+    },
+    {
+      "category": "功能/参数",
+      "en": "Position Check",
+      "zh": "點位確認功能"
+    },
+    {
+      "category": "功能/参数",
+      "en": "Interface File",
+      "zh": "通訊介面資料設定"
+    },
+    {
+      "category": "功能/参数",
+      "en": "Lidar",
+      "zh": "Lidar功能測試"
+    },
+    {
+      "category": "功能/参数",
+      "en": "Auto Alignment",
+      "zh": "自動位置校正"
+    },
+    {
+      "category": "功能/参数",
+      "en": "PM Schedule List",
+      "zh": "保養排程"
+    },
+    {
+      "category": "功能/参数",
+      "en": "Start",
+      "zh": "啟動"
+    },
+    {
+      "category": "功能/参数",
+      "en": "Stop / Beep Off",
+      "zh": "停止與關閉警告音"
+    },
+    {
+      "category": "功能/参数",
+      "en": "One Cycle",
+      "zh": "單循環"
+    },
+    {
+      "category": "功能/参数",
+      "en": "Reset",
+      "zh": "清除錯誤"
+    },
+    {
+      "category": "功能/参数",
+      "en": "Retry",
+      "zh": "重試"
+    },
+    {
+      "category": "功能/参数",
+      "en": "Skip",
+      "zh": "忽略"
+    },
+    {
+      "category": "功能/参数",
+      "en": "Tray Change",
+      "zh": "入料盤區換料盤"
+    },
+    {
+      "category": "功能/参数",
+      "en": "Stack Unload",
+      "zh": "所有料盤退出"
+    },
+    {
+      "category": "功能/参数",
+      "en": "Load",
+      "zh": "載入"
+    },
+    {
+      "category": "功能/参数",
+      "en": "Unload",
+      "zh": "卸載"
+    },
+    {
+      "category": "功能/参数",
+      "en": "Input Auto Skip",
+      "zh": "輸入自動忽略"
+    },
+    {
+      "category": "功能/参数",
+      "en": "Stack Auto Retry",
+      "zh": "料盤自動重試"
+    },
+    {
+      "category": "功能/参数",
+      "en": "Clear All",
+      "zh": "全部清除"
+    },
+    {
+      "category": "功能/参数",
+      "en": "Save",
+      "zh": "儲存"
+    },
+    {
+      "category": "功能/参数",
+      "en": "Cancel",
+      "zh": "取消"
+    },
+    {
+      "category": "功能/参数",
+      "en": "Close",
+      "zh": "關閉"
+    },
+    {
+      "category": "功能/参数",
+      "en": "New",
+      "zh": "新增"
+    },
+    {
+      "category": "功能/参数",
+      "en": "Modify",
+      "zh": "修改"
+    },
+    {
+      "category": "功能/参数",
+      "en": "Delete",
+      "zh": "刪除"
+    },
+    {
+      "category": "功能/参数",
+      "en": "Copy Old",
+      "zh": "複製前次值"
+    },
+    {
+      "category": "功能/参数",
+      "en": "Copy All",
+      "zh": "複製全部"
+    },
+    {
+      "category": "功能/参数",
+      "en": "Fail Setting",
+      "zh": "連續失敗設定"
+    },
+    {
+      "category": "功能/参数",
+      "en": "Pass Setting",
+      "zh": "連續通過設定"
+    },
+    {
+      "category": "功能/参数",
+      "en": "Yield Setting",
+      "zh": "良率控制設定"
+    },
+    {
+      "category": "功能/参数",
+      "en": "Run Mode",
+      "zh": "運行模式"
+    },
+    {
+      "category": "功能/参数",
+      "en": "Enable Site",
+      "zh": "啟用測試站"
+    },
+    {
+      "category": "功能/参数",
+      "en": "Set Bin",
+      "zh": "設定分級值"
+    },
+    {
+      "category": "功能/参数",
+      "en": "Set Dummy Test Time",
+      "zh": "設定模擬測試時間"
+    },
+    {
+      "category": "功能/参数",
+      "en": "Contact",
+      "zh": "手測選擇測試頭壓貨測試"
+    },
+    {
+      "category": "功能/参数",
+      "en": "Return",
+      "zh": "測試頭壓貨狀態恢復"
+    },
+    {
+      "category": "功能/参数",
+      "en": "Send Start",
+      "zh": "手測送出Start訊號"
+    },
+    {
+      "category": "功能/参数",
+      "en": "Contact Force",
+      "zh": "接觸力量"
+    },
+    {
+      "category": "功能/参数",
+      "en": "Tray Type",
+      "zh": "料盤類型"
+    },
+    {
+      "category": "功能/参数",
+      "en": "SLT Program",
+      "zh": "SLT程式"
+    },
+    {
+      "category": "功能/参数",
+      "en": "Bin Mapping",
+      "zh": "分級映射"
+    },
+    {
+      "category": "功能/参数",
+      "en": "CCD (Pin 1)",
+      "zh": "CCD (Pin 1)"
+    },
+    {
+      "category": "功能/参数",
+      "en": "Pin1-Check",
+      "zh": "Pin1檢測"
+    },
+    {
+      "category": "功能/参数",
+      "en": "Program Type",
+      "zh": "程式類型"
+    },
+    {
+      "category": "功能/参数",
+      "en": "Set SV",
+      "zh": "設定溫度值"
+    },
+    {
+      "category": "功能/参数",
+      "en": "TC1",
+      "zh": "溫控器量測溫度"
+    },
+    {
+      "category": "功能/参数",
+      "en": "Evap",
+      "zh": "蒸發器溫度"
+    },
+    {
+      "category": "功能/参数",
+      "en": "Servo",
+      "zh": "伺服控制"
+    },
+    {
+      "category": "功能/参数",
+      "en": "AC",
+      "zh": "交流電源"
+    },
+    {
+      "category": "功能/参数",
+      "en": "Cooling",
+      "zh": "冷卻狀態"
+    },
+    {
+      "category": "功能/参数",
+      "en": "Force",
+      "zh": "力量狀態"
+    },
+    {
+      "category": "功能/参数",
+      "en": "Clear",
+      "zh": "清除通訊資訊"
+    },
+    {
+      "category": "功能/参数",
+      "en": "Connet",
+      "zh": "連接"
+    },
+    {
+      "category": "功能/参数",
+      "en": "Set Test Enviroment",
+      "zh": "設定測試環境"
+    },
+    {
+      "category": "功能/参数",
+      "en": "Max Show Log",
+      "zh": "最大顯示行數"
+    },
+    {
+      "category": "功能/参数",
+      "en": "Pin",
+      "zh": "固定顯示行數"
+    },
+    {
+      "category": "功能/参数",
+      "en": "Test Log",
+      "zh": "測試通訊紀錄"
+    },
+    {
+      "category": "功能/参数",
+      "en": "Send",
+      "zh": "傳送指令"
+    },
+    {
+      "category": "功能/参数",
+      "en": "Go",
+      "zh": "解鎖等待設定"
+    },
+    {
+      "category": "功能/参数",
+      "en": "Reset",
+      "zh": "重置/停止測試"
+    },
+    {
+      "category": "功能/参数",
+      "en": "Run",
+      "zh": "執行測試"
+    },
+    {
+      "category": "功能/参数",
+      "en": "HOME",
+      "zh": "回原點"
+    },
+    {
+      "category": "功能/参数",
+      "en": "Input Non-JEDEC TrayUp Delay",
+      "zh": "非JEDEC入料盤上升延遲"
+    },
+    {
+      "category": "功能/参数",
+      "en": "Input Thin TrayUp Delay",
+      "zh": "薄盤入料上升延遲"
+    },
+    {
+      "category": "功能/参数",
+      "en": "Input Thick TrayUp Delay",
+      "zh": "厚盤入料上升延遲"
+    },
+    {
+      "category": "功能/参数",
+      "en": "Auto Retry Max Count",
+      "zh": "自動重試最大次數"
+    },
+    {
+      "category": "功能/参数",
+      "en": "Auto Retry PuckZ Offset",
+      "zh": "自動重試Z軸補償"
+    },
+    {
+      "category": "功能/参数",
+      "en": "AOI Match Threshold",
+      "zh": "AOI匹配門檻"
+    },
+    {
+      "category": "功能/参数",
+      "en": "JEDEC Tray Range",
+      "zh": "JEDEC料盤範圍"
+    },
+    {
+      "category": "功能/参数",
+      "en": "All Speed",
+      "zh": "全部速度"
+    },
+    {
+      "category": "功能/参数",
+      "en": "Vacuum Timeout",
+      "zh": "真空超時"
+    },
+    {
+      "category": "功能/参数",
+      "en": "Vacuum Delay",
+      "zh": "真空延遲"
+    },
+    {
+      "category": "功能/参数",
+      "en": "Vacuum Stable",
+      "zh": "真空穩定時間"
+    },
+    {
+      "category": "功能/参数",
+      "en": "Blow Delay",
+      "zh": "吹氣延遲"
+    },
+    {
+      "category": "功能/参数",
+      "en": "Blow Time",
+      "zh": "吹氣時間"
+    },
+    {
+      "category": "功能/参数",
+      "en": "Blow Stable",
+      "zh": "吹氣穩定時間"
+    },
+    {
+      "category": "功能/参数",
+      "en": "Down Time",
+      "zh": "Z軸下降時間"
+    },
+    {
+      "category": "功能/参数",
+      "en": "Up Time",
+      "zh": "Z軸上升時間"
+    },
+    {
+      "category": "功能/参数",
+      "en": "Default",
+      "zh": "恢復預設"
+    },
+    {
+      "category": "功能/参数",
+      "en": "Base File",
+      "zh": "母檔"
+    },
+    {
+      "category": "功能/参数",
+      "en": "Col",
+      "zh": "縱列個數"
+    },
+    {
+      "category": "功能/参数",
+      "en": "Row",
+      "zh": "橫列個數"
+    },
+    {
+      "category": "功能/参数",
+      "en": "A",
+      "zh": "左邊緣到第一個Device距離"
+    },
+    {
+      "category": "功能/参数",
+      "en": "B",
+      "zh": "上緣到第一個Device距離"
+    },
+    {
+      "category": "功能/参数",
+      "en": "C",
+      "zh": "相鄰Device水平距離"
+    },
+    {
+      "category": "功能/参数",
+      "en": "D",
+      "zh": "相鄰Device垂直距離"
+    },
+    {
+      "category": "功能/参数",
+      "en": "H",
+      "zh": "IC長度"
+    },
+    {
+      "category": "功能/参数",
+      "en": "W",
+      "zh": "IC寬度"
+    },
+    {
+      "category": "功能/参数",
+      "en": "High",
+      "zh": "Lidar高門檻"
+    },
+    {
+      "category": "功能/参数",
+      "en": "Low",
+      "zh": "Lidar低門檻"
+    },
+    {
+      "category": "功能/参数",
+      "en": "Lidar detect",
+      "zh": "Lidar檢測位置"
+    },
+    {
+      "category": "功能/参数",
+      "en": "SLT Parameter",
+      "zh": "SLT參數"
+    },
+    {
+      "category": "功能/参数",
+      "en": "SW BIN",
+      "zh": "軟體分級"
+    },
+    {
+      "category": "功能/参数",
+      "en": "HW BIM",
+      "zh": "硬體分級"
+    },
+    {
+      "category": "功能/参数",
+      "en": "Code",
+      "zh": "代碼"
+    },
+    {
+      "category": "功能/参数",
+      "en": "Description",
+      "zh": "描述"
+    },
+    {
+      "category": "功能/参数",
+      "en": "Pass/Fail",
+      "zh": "通過/失敗"
+    },
+    {
+      "category": "功能/参数",
+      "en": "Color",
+      "zh": "顏色"
+    },
+    {
+      "category": "功能/参数",
+      "en": "Module",
+      "zh": "區域選擇"
+    },
+    {
+      "category": "功能/参数",
+      "en": "Arm",
+      "zh": "手臂選擇"
+    },
+    {
+      "category": "功能/参数",
+      "en": "Stack Module",
+      "zh": "料盤模組"
+    },
+    {
+      "category": "功能/参数",
+      "en": "Trolley #1 / #2 / #3 / #4",
+      "zh": "Trolley編號"
+    },
+    {
+      "category": "功能/参数",
+      "en": "Home",
+      "zh": "回初始位置"
+    },
+    {
+      "category": "功能/参数",
+      "en": "Z Down",
+      "zh": "氣壓缸下降"
+    },
+    {
+      "category": "功能/参数",
+      "en": "Z Up",
+      "zh": "氣壓缸上升"
+    },
+    {
+      "category": "功能/参数",
+      "en": "Stack to Site PnP",
+      "zh": "料盤到測試站取放"
+    },
+    {
+      "category": "功能/参数",
+      "en": "Site to Stack PnP",
+      "zh": "測試站到料盤取放"
+    },
+    {
+      "category": "功能/参数",
+      "en": "PnP",
+      "zh": "取放動作"
+    },
+    {
+      "category": "功能/参数",
+      "en": "Quit",
+      "zh": "離開控制模組"
+    },
+    {
+      "category": "功能/参数",
+      "en": "Interface Type",
+      "zh": "通訊類型"
+    },
+    {
+      "category": "功能/参数",
+      "en": "ComPort",
+      "zh": "通訊埠"
+    },
+    {
+      "category": "功能/参数",
+      "en": "Baud Rate",
+      "zh": "鮑率"
+    },
+    {
+      "category": "功能/参数",
+      "en": "Start Delay",
+      "zh": "啟動延遲"
+    },
+    {
+      "category": "功能/参数",
+      "en": "Test Timeout",
+      "zh": "測試超時"
+    },
+    {
+      "category": "功能/参数",
+      "en": "High Sensor On",
+      "zh": "高感測器觸發"
+    },
+    {
+      "category": "功能/参数",
+      "en": "Low Sensor On",
+      "zh": "低感測器觸發"
+    },
+    {
+      "category": "功能/参数",
+      "en": "Go Sensor On",
+      "zh": "中間感測器觸發"
+    },
+    {
+      "category": "功能/参数",
+      "en": "Alarm Sensor On",
+      "zh": "警報感測器觸發"
+    },
+    {
+      "category": "功能/参数",
+      "en": "Robot Initial Start",
+      "zh": "機械手臂初始化啟動"
+    },
+    {
+      "category": "功能/参数",
+      "en": "Robot Initial Stop",
+      "zh": "機械手臂初始化停止"
+    },
+    {
+      "category": "功能/参数",
+      "en": "Select All",
+      "zh": "選擇全部"
+    },
+    {
+      "category": "功能/参数",
+      "en": "Alignment Start",
+      "zh": "原點校正開始"
+    },
+    {
+      "category": "功能/参数",
+      "en": "Alignment Stop",
+      "zh": "原點校正停止"
+    },
+    {
+      "category": "硬件/组件",
+      "en": "Front Arm",
+      "zh": "前手臂"
+    },
+    {
+      "category": "硬件/组件",
+      "en": "Rotator",
+      "zh": "旋轉器"
+    },
+    {
+      "category": "硬件/组件",
+      "en": "Trolley",
+      "zh": "測試托盤"
+    },
+    {
+      "category": "硬件/组件",
+      "en": "Cobra",
+      "zh": "溫度控制器"
+    },
+    {
+      "category": "硬件/组件",
+      "en": "Lidar",
+      "zh": "雷射測距感測器"
+    },
+    {
+      "category": "硬件/组件",
+      "en": "Robot",
+      "zh": "機械手臂"
+    },
+    {
+      "category": "硬件/组件",
+      "en": "Tray",
+      "zh": "料盤"
+    },
+    {
+      "category": "硬件/组件",
+      "en": "Socket",
+      "zh": "測試座"
+    },
+    {
+      "category": "硬件/组件",
+      "en": "Stack",
+      "zh": "料盤堆疊"
+    },
+    {
+      "category": "硬件/组件",
+      "en": "Fix Tray",
+      "zh": "固定料盤"
+    },
+    {
+      "category": "硬件/组件",
+      "en": "Shuttle",
+      "zh": "梭車"
+    },
+    {
+      "category": "硬件/组件",
+      "en": "Vacuum Sensor",
+      "zh": "真空感測器"
+    },
+    {
+      "category": "硬件/组件",
+      "en": "EOAT",
+      "zh": "末端執行器"
+    },
+    {
+      "category": "硬件/组件",
+      "en": "Tester",
+      "zh": "測試機"
+    },
+    {
+      "category": "硬件/组件",
+      "en": "Interface",
+      "zh": "通訊介面"
+    },
+    {
+      "category": "硬件/组件",
+      "en": "CCD",
+      "zh": "CCD相機"
+    },
+    {
+      "category": "硬件/组件",
+      "en": "Handlet",
+      "zh": "Handler"
+    },
+    {
+      "category": "硬件/组件",
+      "en": "Test PC",
+      "zh": "測試電腦"
+    },
+    {
+      "category": "硬件/组件",
+      "en": "Output Stack",
+      "zh": "輸出料盤堆疊"
+    },
+    {
+      "category": "硬件/组件",
+      "en": "Input Stack",
+      "zh": "輸入料盤堆疊"
+    },
+    {
+      "category": "操作/动作",
+      "en": "Save",
+      "zh": "儲存"
+    },
+    {
+      "category": "操作/动作",
+      "en": "Alignment Start",
+      "zh": "原點校正開始"
+    },
+    {
+      "category": "操作/动作",
+      "en": "Lot Done",
+      "zh": "清除總計"
+    },
+    {
+      "category": "操作/动作",
+      "en": "Load",
+      "zh": "載入"
+    },
+    {
+      "category": "操作/动作",
+      "en": "Unload",
+      "zh": "卸載"
+    },
+    {
+      "category": "操作/动作",
+      "en": "Pick",
+      "zh": "吸取"
+    },
+    {
+      "category": "操作/动作",
+      "en": "Place",
+      "zh": "放置"
+    },
+    {
+      "category": "操作/动作",
+      "en": "Initial",
+      "zh": "初始化"
+    },
+    {
+      "category": "操作/动作",
+      "en": "Home",
+      "zh": "回原點"
+    },
+    {
+      "category": "操作/动作",
+      "en": "Z Down",
+      "zh": "Z軸下降"
+    },
+    {
+      "category": "操作/动作",
+      "en": "Z Up",
+      "zh": "Z軸上升"
+    },
+    {
+      "category": "操作/动作",
+      "en": "PnP",
+      "zh": "取放動作"
+    },
+    {
+      "category": "操作/动作",
+      "en": "Export",
+      "zh": "匯出"
+    },
+    {
+      "category": "操作/动作",
+      "en": "Query",
+      "zh": "查詢"
+    },
+    {
+      "category": "操作/动作",
+      "en": "Contact",
+      "zh": "壓貨測試"
+    },
+    {
+      "category": "操作/动作",
+      "en": "Return",
+      "zh": "恢復位置"
+    },
+    {
+      "category": "操作/动作",
+      "en": "Send Start",
+      "zh": "送出啟動訊號"
+    },
+    {
+      "category": "操作/动作",
+      "en": "Servo On",
+      "zh": "伺服開啟"
+    },
+    {
+      "category": "操作/动作",
+      "en": "Servo Off",
+      "zh": "伺服關閉"
+    },
+    {
+      "category": "操作/动作",
+      "en": "AC Power On",
+      "zh": "交流電源開啟"
+    },
+    {
+      "category": "操作/动作",
+      "en": "AC Power Off",
+      "zh": "交流電源關閉"
+    },
+    {
+      "category": "操作/动作",
+      "en": "Connet",
+      "zh": "連接"
+    },
+    {
+      "category": "操作/动作",
+      "en": "Set Test Enviroment",
+      "zh": "設定測試環境"
+    },
+    {
+      "category": "操作/动作",
+      "en": "Go",
+      "zh": "解鎖等待設定"
+    },
+    {
+      "category": "操作/动作",
+      "en": "Reset",
+      "zh": "重置"
+    },
+    {
+      "category": "操作/动作",
+      "en": "Run",
+      "zh": "執行"
+    },
+    {
+      "category": "操作/动作",
+      "en": "Tray Change Move Out",
+      "zh": "換盤移動"
+    },
+    {
+      "category": "操作/动作",
+      "en": "Stack to Site PnP",
+      "zh": "料盤到測試站取放"
+    },
+    {
+      "category": "操作/动作",
+      "en": "Site to Stack PnP",
+      "zh": "測試站到料盤取放"
+    },
+    {
+      "category": "模式/状态名称",
+      "en": "On Line/Normal",
+      "zh": "線上/正常模式"
+    },
+    {
+      "category": "模式/状态名称",
+      "en": "Off Line/Normal",
+      "zh": "離線/正常模式"
+    },
+    {
+      "category": "模式/状态名称",
+      "en": "Off Line/No Device",
+      "zh": "離線/無元件模式"
+    },
+    {
+      "category": "模式/状态名称",
+      "en": "Off Line/ No Device No Tray",
+      "zh": "離線/無元件無料盤"
+    },
+    {
+      "category": "模式/状态名称",
+      "en": "UnInitial",
+      "zh": "未初始化"
+    },
+    {
+      "category": "模式/状态名称",
+      "en": "Ready",
+      "zh": "就緒"
+    },
+    {
+      "category": "模式/状态名称",
+      "en": "Cycle",
+      "zh": "連續循環"
+    },
+    {
+      "category": "模式/状态名称",
+      "en": "Cycle Stop",
+      "zh": "循環停止"
+    },
+    {
+      "category": "模式/状态名称",
+      "en": "One Cycle",
+      "zh": "單循環"
+    },
+    {
+      "category": "模式/状态名称",
+      "en": "One Cycle Stop",
+      "zh": "單循環停止"
+    },
+    {
+      "category": "模式/状态名称",
+      "en": "User",
+      "zh": "作業員模式"
+    },
+    {
+      "category": "模式/状态名称",
+      "en": "Setup",
+      "zh": "設定工程師模式"
+    },
+    {
+      "category": "模式/状态名称",
+      "en": "Engineer",
+      "zh": "系統工程師模式"
+    },
+    {
+      "category": "模式/状态名称",
+      "en": "On Line",
+      "zh": "線上模式"
+    },
+    {
+      "category": "模式/状态名称",
+      "en": "Off Line",
+      "zh": "離線模式"
+    },
+    {
+      "category": "模式/状态名称",
+      "en": "Pass",
+      "zh": "通過"
+    },
+    {
+      "category": "模式/状态名称",
+      "en": "Fail",
+      "zh": "失敗"
+    },
+    {
+      "category": "缩写/代号",
+      "en": "SLT",
+      "zh": "系統層級測試"
+    },
+    {
+      "category": "缩写/代号",
+      "en": "UPH",
+      "zh": "每小時產出"
+    },
+    {
+      "category": "缩写/代号",
+      "en": "TLC",
+      "zh": "扭力限制控制"
+    },
+    {
+      "category": "缩写/代号",
+      "en": "EMG",
+      "zh": "急停"
+    },
+    {
+      "category": "缩写/代号",
+      "en": "PM",
+      "zh": "保養"
+    },
+    {
+      "category": "缩写/代号",
+      "en": "Lidar",
+      "zh": "雷射測距"
+    },
+    {
+      "category": "缩写/代号",
+      "en": "CCD",
+      "zh": "電荷耦合器件"
+    },
+    {
+      "category": "缩写/代号",
+      "en": "AOI",
+      "zh": "自動光學檢測"
+    },
+    {
+      "category": "缩写/代号",
+      "en": "IO",
+      "zh": "輸入輸出"
+    },
+    {
+      "category": "缩写/代号",
+      "en": "N/A",
+      "zh": "不適用"
+    },
+    {
+      "category": "缩写/代号",
+      "en": "JEDEC",
+      "zh": "固態技術協會標準"
+    },
+    {
+      "category": "缩写/代号",
+      "en": "Non-JEDEC",
+      "zh": "非JEDEC標準"
+    },
+    {
+      "category": "缩写/代号",
+      "en": "Bin",
+      "zh": "分級"
+    },
+    {
+      "category": "缩写/代号",
+      "en": "TS",
+      "zh": "測試座"
+    },
+    {
+      "category": "缩写/代号",
+      "en": "PC",
+      "zh": "個人電腦"
+    },
+    {
+      "category": "缩写/代号",
+      "en": "RS232",
+      "zh": "串列通訊介面"
+    }
+  ],
+  "document": "3200 Optimized User Manual V1.2.doc",
+  "total": 231
+}

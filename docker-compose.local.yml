@@ -1,0 +1,30 @@
+# 本地 Windows 开发配置
+# 使用方式: docker-compose -f docker-compose.yml -f docker-compose.local.yml up -d --build
+#
+# 与生产配置的区别：
+# - 模型直接挂载你本机已有的文件，无需重新下载
+# - 上传文件和日志也保存在本地目录
+
+services:
+  backend:
+    build:
+      args:
+        APT_MIRROR: mirrors.aliyun.com
+        PIP_MIRROR: https://mirrors.aliyun.com/pypi/simple/
+    volumes:
+      # 直接挂载你已有的 HF 模型目录（跳过 4.5GB 下载）
+      - "E:\\Code Tools\\huggingface:/app/models/huggingface"
+      # EasyOCR 模型（如果已下载过）
+      - "${USERPROFILE}\\.EasyOCR\\model:/root/.EasyOCR/model"
+      # 上传文件和日志存本地
+      - "./uploads:/app/uploads"
+      - "./logs:/app/logs"
+    environment:
+      CORS_ORIGINS: "http://localhost,http://localhost:80,http://127.0.0.1"
+      HF_HUB_OFFLINE: "1"
+
+  nginx:
+    build:
+      args:
+        NPM_MIRROR: https://registry.npmmirror.com
+        VITE_WS_BASE_URL: ws://localhost/api/v1

@@ -16,7 +16,7 @@ const error = ref<string | null>(null)
 const sessionId = ref<string | null>(null)
 
 async function connect() {
-  const jwt = sessionStorage.getItem('token')
+  const jwt = localStorage.getItem('token')
   if (!jwt || ws) return
 
   // 优先复用 sessionStorage 中保存的会话 ID（断线重连不换会话），
@@ -68,7 +68,7 @@ async function connect() {
     // 通知所有注册的断连回调
     closeCallbacks.forEach((cb) => cb(event))
     // 1000: 主动断开  1001: 服务端踢出（新连接顶替），不应自动重连
-    if (event.code !== 1000 && event.code !== 1001 && sessionStorage.getItem('token')) {
+    if (event.code !== 1000 && event.code !== 1001 && localStorage.getItem('token')) {
       setTimeout(() => { connect().catch(() => { }) }, 5000)
     }
   }

@@ -4,6 +4,7 @@ from datetime import datetime, timezone
 from uuid import uuid4
 
 from fastapi import APIRouter, Depends, File, UploadFile
+from fastapi.responses import FileResponse
 from langchain_core.messages import AIMessage
 from sqlalchemy import delete, select
 from starlette.responses import JSONResponse
@@ -39,16 +40,22 @@ async def upload_resume(
     # 1. 删除用户的旧简历（避免新旧共存）
     async with pool.connection() as conn:
         cur = await conn.execute(
-            "SELECT id FROM resume_documents WHERE user_id = %s", (user_id,)
+            "SELECT id, file_path FROM resume_documents WHERE user_id = %s", (user_id,)
         )
         for row in await cur.fetchall():
-            old_id = row[0]
+            old_id, old_file_path = row[0], row[1]
             await delete_document(pool, old_id)
             await conn.execute("DELETE FROM resume_documents WHERE id = %s", (old_id,))
-            for f in os.listdir(settings.UPLOAD_DIR):
-                if f.endswith(".pdf"):
-                    os.remove(os.path.join(settings.UPLOAD_DIR, f))
-                    break
+            if old_file_path:
+                old_path = os.path.join(settings.UPLOAD_DIR, old_file_path)
+                if os.path.exists(old_path):
+                    os.remove(old_path)
+            else:
+                # 兼容旧记录（无 file_path）：删除目录下任意 .pdf
+                for f in os.listdir(settings.UPLOAD_DIR):
+                    if f.endswith(".pdf"):
+                        os.remove(os.path.join(settings.UPLOAD_DIR, f))
+                        break
 
     # 2. 保存 PDF 文件
     save_name = f"{uuid4().hex}.pdf"
@@ -60,9 +67,9 @@ async def upload_resume(
     # 3. 先插入一条 processing 状态的记录，立即返回给前端
     async with pool.connection() as conn:
         cur = await conn.execute(
-            "INSERT INTO resume_documents (user_id, filename, chunk_count, status) "
-            "VALUES (%s, %s, 0, 'processing') RETURNING id",
-            (user_id, file.filename),
+            "INSERT INTO resume_documents (user_id, filename, chunk_count, status, file_path) "
+            "VALUES (%s, %s, 0, 'processing', %s) RETURNING id",
+            (user_id, file.filename, save_name),
         )
         row = await cur.fetchone()
         doc_id = row[0]
@@ -120,7 +127,8 @@ async def _process_resume_background(
             graph = get_graph()
             async with pool.connection() as conn:
                 cur = await conn.execute(
-                    "SELECT session_id FROM sessions WHERE user_id = %s", (user_id,)
+                    "SELECT session_id FROM sessions WHERE user_id = %s AND agent_type = 'job_advisor'",
+                    (user_id,),
                 )
                 session_ids = [r[0] for r in await cur.fetchall()]
 
@@ -202,7 +210,44 @@ async def delete_resume(
     pool = get_pool()
     await delete_document(pool, doc.id)
 
+    # 删除磁盘上的文件
+    if doc.file_path:
+        file_path = os.path.join(settings.UPLOAD_DIR, doc.file_path)
+        if os.path.exists(file_path):
+            os.remove(file_path)
+
     await db.delete(doc)
     await db.commit()
     logger.info(f"简历已删除 user={user_id} id={resume_id}")
     return ApiResponse(message="已删除")
+
+
+@router.get("/resumes/{resume_id}/download")
+async def download_resume(
+    resume_id: int,
+    user_id: int = Depends(get_current_user),
+    db=Depends(get_db),
+):
+    """下载简历 PDF 文件"""
+    result = await db.execute(
+        select(ResumeDocument).where(
+            ResumeDocument.id == resume_id,
+            ResumeDocument.user_id == user_id,
+        )
+    )
+    doc = result.scalar()
+    if doc is None:
+        return JSONResponse(status_code=404, content={"code": 404, "message": "简历不存在"})
+
+    if not doc.file_path:
+        return JSONResponse(status_code=404, content={"code": 404, "message": "简历文件不存在"})
+
+    file_path = os.path.join(settings.UPLOAD_DIR, doc.file_path)
+    if not os.path.exists(file_path):
+        return JSONResponse(status_code=404, content={"code": 404, "message": "简历文件不存在"})
+
+    return FileResponse(
+        path=file_path,
+        filename=doc.filename,
+        media_type="application/pdf",
+    )

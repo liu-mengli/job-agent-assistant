@@ -1,13 +1,27 @@
 <script setup lang="ts">
+import { computed } from 'vue'
 import { useRoute } from 'vue-router'
+import { useAuthStore } from '../stores/auth'
 
 const route = useRoute()
+const authStore = useAuthStore()
 
-const items = [
+const allItems = [
   { path: '/', label: '仪表盘', icon: '⌂' },
   { path: '/weather', label: '天气助手', icon: '☀' },
   { path: '/job-assistant', label: '求职助手', icon: '💼' },
+  { path: '/hr-assistant', label: 'HR 助手', icon: '👥' },
+  { path: '/knowledge-assistant', label: '知识库', icon: '📚' },
+  { path: '/resume', label: '我的简历', icon: '📋' },
+  { path: '/admin/users', label: '人员管理', icon: '👤' },
 ]
+
+const items = computed(() => {
+  if (authStore.isAdmin) return allItems
+  return allItems.filter(item =>
+    item.path === '/' || item.path === '/hr-assistant' || item.path === '/resume'
+  )
+})
 </script>
 
 <template>

@@ -1,18 +1,30 @@
 <script setup lang="ts">
+import { useRouter } from 'vue-router'
 import { useAuthStore } from '../stores/auth'
 import SideNav from '../components/SideNav.vue'
 
+const router = useRouter()
 const authStore = useAuthStore()
+
+function handleAuthAction() {
+  if (authStore.token) {
+    authStore.logout()
+  } else {
+    router.push('/login')
+  }
+}
 </script>
 
 <template>
   <div class="layout">
     <!-- Header -->
     <header class="header">
-      <div class="header-brand">AI 找工作助手</div>
+      <div class="header-brand">{{ authStore.isAdmin ? 'AI 找工作助手' : 'AI HR助手' }}</div>
       <div class="header-right">
         <span v-if="authStore.user" class="header-user">{{ authStore.user.username }}</span>
-        <button class="header-btn" @click="authStore.logout">退出登录</button>
+        <button class="header-btn" @click="handleAuthAction">
+          {{ authStore.token ? '退出登录' : '登录' }}
+        </button>
       </div>
     </header>
 
@@ -97,6 +109,5 @@ const authStore = useAuthStore()
 .content {
   flex: 1;
   overflow-y: auto;
-  padding: 28px 32px;
 }
 </style>

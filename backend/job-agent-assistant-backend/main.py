@@ -1,3 +1,4 @@
+import os
 import sys
 from contextlib import asynccontextmanager
 
@@ -34,16 +35,45 @@ async def lifespan(app: FastAPI):
 
     # 创建 resume_chunks 表（向量切片表，由 psycopg 管理）
     from api.rag.store import ensure_table
-    await ensure_table(pool)
+    try:
+        logger.info("正在创建 resume_chunks 表...")
+        await ensure_table(pool)
+        logger.info("resume_chunks 表检查完成")
+    except Exception:
+        logger.exception("resume_chunks 表创建失败，请检查 PostgreSQL 连接")
+        raise
 
     # 预热 embedding 模型（首次自动下载 ~100MB）
     from api.rag.embedder import get_model
+    logger.info("正在加载 bge-small embedding 模型...")
     get_model()
     logger.info(f"Embedding 模型已加载: {settings.EMBEDDING_MODEL}")
 
     # 初始化 Graph（含 AsyncPostgresSaver checkpointer + search_resume tool）
     from api.agent.graph import init_graph
     await init_graph(pool)
+
+    # 初始化 HR Agent Graph（复用同一 pool + checkpoint 表）
+    from api.agent.hr_graph import init_hr_graph
+    await init_hr_graph(pool)
+
+    # 创建知识库目录 + knowledge_chunks 表（vector(1024)）
+    import os
+    os.makedirs(settings.KB_UPLOAD_DIR, exist_ok=True)
+    from api.rag.kb_store import ensure_kb_table
+    await ensure_kb_table(pool)
+
+    # 初始化 KB Agent Graph（bge-m3 模型懒加载——首次知识库查询时才加载）
+    from api.agent.kb_graph import init_kb_graph
+    await init_kb_graph(pool)
+
+    # 初始化 SQL Agent Graph
+    from api.agent.sql_graph import init_sql_graph
+    await init_sql_graph(pool)
+    logger.info(
+        "知识库模块已就绪（bge-m3 模型将在首次查询时加载）。"
+        "如需加速，请在 .env 中设置 HF_ENDPOINT=https://hf-mirror.com"
+    )
 
     yield
 
@@ -61,9 +91,10 @@ from api.middleware import RequestIdMiddleware
 app.add_middleware(RequestIdMiddleware)
 
 # 配置 CORS 中间件，允许 Vue3 前端跨域访问
+origins = [o.strip() for o in settings.CORS_ORIGINS.split(",") if o.strip()]
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"],
+    allow_origins=origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -97,3 +128,9 @@ async def global_exception_handler(request: Request, exc: Exception):
 
 # 挂载 v1 路由聚合模块
 app.include_router(v1_router)
+
+# 知识库图片静态目录
+from fastapi.staticfiles import StaticFiles
+_kb_images_dir = os.path.join(settings.KB_UPLOAD_DIR, "images")
+os.makedirs(_kb_images_dir, exist_ok=True)
+app.mount("/static/kb-images", StaticFiles(directory=_kb_images_dir), name="kb_images")

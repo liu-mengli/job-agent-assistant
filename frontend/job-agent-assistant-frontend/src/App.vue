@@ -18,6 +18,21 @@ watch(
   },
   { immediate: true },
 )
+
+// 根据角色动态更新网页标题
+watch(
+  () => authStore.user,
+  (u) => {
+    if (!u) {
+      document.title = 'job-agent-assistant-frontend'
+    } else if (u.role === 'admin') {
+      document.title = 'AI 找工作助手'
+    } else {
+      document.title = 'AI HR助手'
+    }
+  },
+  { immediate: true },
+)
 </script>
 
 <template>

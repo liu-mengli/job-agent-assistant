@@ -1,12 +1,14 @@
 import { defineStore } from 'pinia'
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
-import { loginApi, fetchUserInfo, type UserInfo } from '../api/auth'
+import { loginApi, registerApi, fetchUserInfo, type UserInfo } from '../api/auth'
 
 export const useAuthStore = defineStore('auth', () => {
-  const token = ref(sessionStorage.getItem('token') || '')
+  const token = ref(localStorage.getItem('token') || '')
   const user = ref<UserInfo | null>(null)
   const router = useRouter()
+
+  const isAdmin = computed(() => user.value?.role === 'admin')
 
   async function init() {
     if (token.value && !user.value) {
@@ -14,7 +16,7 @@ export const useAuthStore = defineStore('auth', () => {
         user.value = await fetchUserInfo()
       } catch {
         token.value = ''
-        sessionStorage.removeItem('token')
+        localStorage.removeItem('token')
       }
     }
   }
@@ -23,9 +25,20 @@ export const useAuthStore = defineStore('auth', () => {
     try {
       const data = await loginApi(username, password)
       token.value = data.token
-      sessionStorage.setItem('token', token.value)
-      // 登录后拉取用户信息
+      localStorage.setItem('token', token.value)
       user.value = await fetchUserInfo()
+      return true
+    } catch {
+      return false
+    }
+  }
+
+  async function register(username: string, password: string): Promise<boolean> {
+    try {
+      const data = await registerApi(username, password)
+      token.value = data.token
+      localStorage.setItem('token', token.value)
+      user.value = { id: (data as any).id, username: (data as any).username, role: (data as any).role || 'user' }
       return true
     } catch {
       return false
@@ -35,9 +48,10 @@ export const useAuthStore = defineStore('auth', () => {
   function logout() {
     token.value = ''
     user.value = null
-    sessionStorage.removeItem('token')
+    localStorage.removeItem('token')
+    localStorage.removeItem('sessionId')
     router.push('/login')
   }
 
-  return { token, user, init, login, logout }
+  return { token, user, isAdmin, init, login, register, logout }
 })

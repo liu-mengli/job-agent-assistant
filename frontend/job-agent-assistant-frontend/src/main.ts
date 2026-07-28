@@ -13,7 +13,7 @@ app.use(createPinia())
 app.use(router)
 app.use(ElementPlus)
 
-// 刷新页面后，从 sessionStorage 恢复用户信息
+// 刷新页面后，从 localStorage 恢复用户信息
 useAuthStore().init()
 
 app.mount('#app')

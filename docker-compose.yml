@@ -1,0 +1,86 @@
+services:
+  postgres:
+    image: pgvector/pgvector:pg15
+    container_name: job-agent-postgres
+    environment:
+      POSTGRES_DB: job_agent
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-changeme}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - job-agent-net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d job_agent"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    restart: unless-stopped
+
+  backend:
+    build:
+      context: ./backend/job-agent-assistant-backend
+      dockerfile: Dockerfile
+      args:
+        APT_MIRROR: ${APT_MIRROR:-}
+        PIP_MIRROR: ${PIP_MIRROR:-}
+    container_name: job-agent-backend
+    env_file:
+      - .env.docker
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      HF_HOME: /app/models/huggingface
+      HF_HUB_OFFLINE: "0"
+      HF_ENDPOINT: ${HF_ENDPOINT:-}
+      EMBEDDING_DEVICE: cpu
+      KB_EMBEDDING_DEVICE: cpu
+      LIBREOFFICE_PATH: /usr/bin/soffice
+      CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost}
+    volumes:
+      - models:/app/models/huggingface
+      - easyocr_models:/root/.EasyOCR/model
+      - uploads:/app/uploads
+      - logs:/app/logs
+    networks:
+      - job-agent-net
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/v1/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 120s
+    restart: unless-stopped
+
+  nginx:
+    build:
+      context: ./frontend/job-agent-assistant-frontend
+      dockerfile: Dockerfile
+      args:
+        NPM_MIRROR: ${NPM_MIRROR:-}
+        VITE_API_BASE_URL: /api/v1
+        VITE_WS_BASE_URL: ${VITE_WS_BASE_URL:-ws://localhost/api/v1}
+        VITE_APP_TITLE: AI 找工作助手
+    container_name: job-agent-nginx
+    ports:
+      - "${APP_PORT:-80}:80"
+    networks:
+      - job-agent-net
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+volumes:
+  models:
+  easyocr_models:
+  uploads:
+  logs:
+  postgres_data:
+
+networks:
+  job-agent-net:
+    driver: bridge

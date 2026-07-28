@@ -16,14 +16,10 @@ class UserPreference(Base):
     user_id: Mapped[int] = mapped_column(Integer, ForeignKey("users.id"), nullable=False, unique=True, index=True)
 
     city: Mapped[str | None] = mapped_column(String(50), nullable=True)
-    work_mode: Mapped[str | None] = mapped_column(String(20), nullable=True)
     salary_min: Mapped[int | None] = mapped_column(Integer, nullable=True)
     salary_max: Mapped[int | None] = mapped_column(Integer, nullable=True)
-    industry: Mapped[str | None] = mapped_column(String(50), nullable=True)
-    company_size: Mapped[str | None] = mapped_column(String(20), nullable=True)
-    tech_stack: Mapped[str | None] = mapped_column(String(500), nullable=True)  # 逗号分隔
-    deal_breakers: Mapped[str | None] = mapped_column(String(500), nullable=True)
-    experience_years: Mapped[int | None] = mapped_column(Integer, nullable=True)
-    job_status: Mapped[str | None] = mapped_column(String(50), nullable=True)
+    job_keywords: Mapped[str | None] = mapped_column(String(50), nullable=True)
+    experience_years: Mapped[str | None] = mapped_column(String(20), nullable=True)  # 下拉选项
+    company_age: Mapped[int | None] = mapped_column(Integer, nullable=True)  # 公司最低成立年限
 
     updated_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now(), onupdate=func.now())

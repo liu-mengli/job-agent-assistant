@@ -1,12 +1,13 @@
 /** 岗位条目 */
 export interface JobItem {
   rank: number
-  title: string
-  company: string
-  salary: string
-  experience: string
+  title: string | null
+  company: string | null
+  salary: string | null
+  experience: string | null
   match_score?: number | null
-  reason: string
+  reason: string | null
+  company_years?: string | null
 }
 
 /** 技能逐项对比 */
@@ -27,6 +28,7 @@ export interface StructuredContent {
 
   // browse / full_recommendation
   jobs?: JobItem[] | null
+  all_jobs?: JobItem[] | null  // SQL Agent 返回的完整岗位列表（用于右侧面板）
   assessment?: string | null
   next_steps?: string | null
 

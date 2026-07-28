@@ -8,6 +8,8 @@ from langchain_core.messages import HumanMessage, AIMessageChunk
 from sqlalchemy import select
 
 from api.agent.graph import get_graph
+from api.agent.hr_graph import get_hr_graph
+from api.agent.sql_graph import get_sql_graph
 from api.database import async_session
 from api.dependencies import get_current_user
 from api.log import logger
@@ -23,7 +25,7 @@ router = APIRouter()
 UUID_RE = re.compile(r"^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$")
 
 
-async def _upsert_session(user_id: int, session_id: str, content: str) -> None:
+async def _upsert_session(user_id: int, session_id: str, content: str, agent_type: str = "job_advisor") -> None:
     """写入或更新会话索引记录（在 LLM 回复成功后调用）"""
     async with async_session() as db:
         result = await db.execute(
@@ -35,8 +37,24 @@ async def _upsert_session(user_id: int, session_id: str, content: str) -> None:
             existing.updated_at = func.now()
         else:
             title = content[:30] + ("..." if len(content) > 30 else "")
-            db.add(Session(user_id=user_id, session_id=session_id, title=title))
+            db.add(Session(user_id=user_id, session_id=session_id, title=title, agent_type=agent_type))
         await db.commit()
+
+
+async def _save_job_results(session_id: str, jobs: list) -> None:
+    """持久化岗位查询结果到 sessions 表"""
+    import json
+    try:
+        async with async_session() as db:
+            result = await db.execute(
+                select(Session).where(Session.session_id == session_id)
+            )
+            session = result.scalar()
+            if session:
+                session.job_results = json.dumps(jobs, ensure_ascii=False)
+                await db.commit()
+    except Exception:
+        logger.exception("持久化岗位结果失败")
 
 
 # ============================================================
@@ -100,6 +118,7 @@ async def websocket_chat(
 
                 elif msg_type == MessageType.CHAT_REQUEST.value:
                     content = payload.get("content", "") if payload else ""
+                    agent_type = payload.get("agent_type", "job_advisor") if payload else "job_advisor"
 
                     # --- 并发保护：同一会话同一时间只跑一个 Agent ---
                     if not await agent_lock.try_acquire(user_id, session_id):
@@ -117,7 +136,16 @@ async def websocket_chat(
                         # 自动从 PG 恢复历史并 add_messages 合并
                         streaming_ok = True
                         tool_started = False
-                        async for msg, _ in get_graph().astream(
+                        if agent_type == "hr":
+                            graph = get_hr_graph()
+                        elif agent_type == "kb":
+                            from api.agent.kb_graph import get_kb_graph
+                            graph = get_kb_graph()
+                        elif agent_type == "sql_agent":
+                            graph = get_sql_graph()
+                        else:
+                            graph = get_graph()
+                        async for msg, _ in graph.astream(
                             {"messages": [HumanMessage(content=content)], "user_id": user_id},
                             stream_mode="messages",
                             config={"configurable": {"thread_id": session_id}},
@@ -125,9 +153,15 @@ async def websocket_chat(
                             # 检测 LLM 决定调用工具，通知前端
                             if not tool_started and hasattr(msg, "tool_calls") and msg.tool_calls:
                                 tool_started = True
-                                await manager.send_json_to(
-                                    stream_chunk("（正在检索简历...）\n\n"), ws
-                                )
+                                if agent_type == "kb":
+                                    tool_hint = "（正在检索知识库...）\n\n"
+                                elif agent_type == "hr":
+                                    tool_hint = "（正在检索简历...）\n\n"
+                                elif agent_type == "sql_agent":
+                                    tool_hint = "（正在查询数据库...）\n\n"
+                                else:
+                                    tool_hint = "（正在检索...）\n\n"
+                                await manager.send_json_to(stream_chunk(tool_hint), ws)
 
                             if isinstance(msg, AIMessageChunk) and msg.content:
                                 ok = await manager.send_json_to(stream_chunk(msg.content), ws)
@@ -136,17 +170,32 @@ async def websocket_chat(
                                     streaming_ok = False
                                     break
 
-                        # 仅在流式完整结束时推送完成信号 + 写入会话元数据
+                        # 流式结束：立即通知前端停止 loading
                         if streaming_ok:
-                            await _upsert_session(user_id, session_id, content)
+                            await _upsert_session(user_id, session_id, content, agent_type)
+                            await manager.send_system(MessageType.CHAT_DONE, user_id, session_id)
 
-                            # 尝试提取结构化输出
+                            # 结构化输出异步提取（不阻塞前端，延迟推送）
                             try:
-                                final_state = await get_graph().aget_state(
+                                final_state = await graph.aget_state(
                                     {"configurable": {"thread_id": session_id}}
                                 )
                                 if final_state and final_state.values:
                                     structured = final_state.values.get("structured_content")
+                                    sql_jobs = final_state.values.get("sql_jobs")
+                                    logger.info(
+                                        f"结构化输出合并: structured_jobs={len((structured.get('jobs') or [])) if isinstance(structured, dict) else 'N/A'}, "
+                                        f"sql_jobs={len(sql_jobs) if sql_jobs else 'None'}"
+                                    )
+                                    if sql_jobs:
+                                        merged_jobs = sql_jobs[:10]
+                                        if isinstance(structured, dict):
+                                            structured = {**structured, "jobs": merged_jobs, "all_jobs": sql_jobs}
+                                        else:
+                                            structured = {"response_type": "browse", "jobs": merged_jobs, "all_jobs": sql_jobs}
+                                    if sql_jobs:
+                                        await _save_job_results(session_id, sql_jobs)
+
                                     if structured and isinstance(structured, dict) and structured.get("response_type"):
                                         await manager.send_system(
                                             MessageType.CHAT_STRUCTURED, user_id, session_id,
@@ -154,8 +203,6 @@ async def websocket_chat(
                                         )
                             except Exception:
                                 logger.exception("获取结构化输出失败")
-
-                            await manager.send_system(MessageType.CHAT_DONE, user_id, session_id)
 
                     except Exception:
                         logger.exception("聊天处理异常")

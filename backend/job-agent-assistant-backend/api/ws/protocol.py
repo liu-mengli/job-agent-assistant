@@ -10,7 +10,7 @@ class MessageType(StrEnum):
     # 握手
     AUTH_SUCCESS = "auth.success"
     # 聊天
-    CHAT_REQUEST = "chat.request"
+    CHAT_REQUEST = "chat.request"  
     CHAT_STREAM = "chat.stream"
     CHAT_DONE = "chat.done"
     CHAT_BUSY = "chat.busy"      # Agent 正忙，拒绝新请求

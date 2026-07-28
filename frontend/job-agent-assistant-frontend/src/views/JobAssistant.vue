@@ -1,11 +1,13 @@
 <script setup lang="ts">
 import { ref, nextTick, onMounted, onUnmounted, watch } from 'vue'
 import { useWebSocket } from '../composables/useWebSocket'
-import { fetchSessions, fetchSessionMessages, deleteSession, type SessionItem } from '../api/sessions'
+import { fetchSessions, fetchSessionMessages, fetchSessionJobs, deleteSession, type SessionItem } from '../api/sessions'
 import { uploadResume, fetchResumes, deleteResume, type ResumeItem } from '../api/resumes'
 import { fetchPreferences, savePreferences, type UserPreferences } from '../api/preferences'
+import { uploadJobsJson } from '../api/jobs'
 import type { StructuredContent } from '../types/structured'
 import StructuredMessage from '../components/StructuredMessage.vue'
+import { renderMarkdown } from '../utils/markdown'
 
 interface Message {
   role: 'user' | 'assistant' | 'system'
@@ -97,9 +99,8 @@ async function handleDeleteResume(id: number) {
 const showPrefForm = ref(false)
 const prefLoading = ref(false)
 const preferences = ref<UserPreferences>({
-  city: null, work_mode: null, salary_min: null, salary_max: null,
-  industry: null, company_size: null, tech_stack: null,
-  deal_breakers: null, experience_years: null, job_status: null,
+  city: null, salary_min: null, salary_max: null,
+  job_keywords: null, experience_years: null, company_age: null,
 })
 
 async function loadPreferences() {
@@ -121,19 +122,38 @@ async function handleSavePreferences() {
   }
 }
 
+// --- 上传岗位 JSON ---
+const uploadingJobs = ref(false)
+const jobsFileInput = ref<HTMLInputElement>()
+
+async function handleUploadJobs(e: Event) {
+  const input = e.target as HTMLInputElement
+  const file = input.files?.[0]
+  if (!file) return
+  uploadingJobs.value = true
+  try {
+    const result = await uploadJobsJson(file)
+    messages.value.push({
+      role: 'system',
+      content: `岗位上传完成：新增 ${result.new} 条，更新 ${result.update} 条，共 ${result.total} 条`,
+    })
+  } catch (err: any) {
+    messages.value.push({ role: 'system', content: '岗位上传失败：' + (err?.message || '未知错误') })
+  } finally {
+    uploadingJobs.value = false
+    input.value = ''
+  }
+}
+
 // 偏好选项
-const workModeOptions = [
+const expOptions = [
   { label: '不限', value: '' },
-  { label: '远程', value: 'remote' },
-  { label: '现场', value: 'onsite' },
-  { label: '混合', value: 'hybrid' },
-]
-const jobStatusOptions = [
-  { label: '请选择', value: '' },
-  { label: '在职看机会', value: '在职看机会' },
-  { label: '离职立即到岗', value: '离职立即到岗' },
-  { label: '应届生', value: '应届生' },
-  { label: '暂不求职', value: '暂不求职' },
+  { label: '在校/应届', value: '在校/应届' },
+  { label: '1年以内', value: '1年以内' },
+  { label: '1-3年', value: '1-3年' },
+  { label: '3-5年', value: '3-5年' },
+  { label: '5-10年', value: '5-10年' },
+  { label: '10年以上', value: '10年以上' },
 ]
 
 // --- 会话列表 ---
@@ -144,7 +164,7 @@ const loadingSessions = ref(false)
 async function loadSessions() {
   loadingSessions.value = true
   try {
-    const data = await fetchSessions()
+    const data = await fetchSessions('job_advisor')
     sessions.value = data.sessions
 
     if (sessions.value.length === 0) {
@@ -158,9 +178,8 @@ async function loadSessions() {
     const inList = activeSessionId.value
       && sessions.value.some(s => s.session_id === activeSessionId.value)
 
-    if (!inList) {
-      // 不在列表中（首次进入 / 清库后 / sessionStorage 里的 ID 已过时）
-      // → 默认加载最新的会话
+    // 正在发送消息时不要切换会话，避免覆盖流式回答
+    if (!inList && !sending.value) {
       await switchToSession(sessions.value[0].session_id)
     }
   } catch {
@@ -183,6 +202,7 @@ async function switchToSession(sessionId: string) {
       role: m.role as Message['role'],
       content: m.content,
     }))
+    await loadJobResultsForSession(sessionId)
     await scrollToBottom()
   } catch {
     messages.value = []
@@ -197,6 +217,7 @@ async function handleNewSession() {
   ws.newSession()
   activeSessionId.value = null
   messages.value = []
+  jobResults.value = []
   // newSession 内部调用 disconnect+connect，connect 生成新 UUID 并写入 sessionStorage
 }
 
@@ -232,10 +253,19 @@ function onStream(payload: any) {
   scrollToBottom()
 }
 
+async function loadJobResultsForSession(sessionId?: string) {
+  const sid = sessionId || activeSessionId.value
+  if (!sid) { jobResults.value = []; return }
+  try {
+    const data = await fetchSessionJobs(sid)
+    jobResults.value = data.jobs || []
+  } catch { /* 静默 */ }
+}
+
 function onDone() {
-  sending.value = false
-  // LLM 回复完成后刷新会话列表
   loadSessions()
+  loadJobResultsForSession()
+  sending.value = false
 }
 
 function onError(payload: any) {
@@ -257,7 +287,18 @@ function onBusy(payload: any) {
   }
 }
 
+// --- 岗位查询结果列表（右侧面板展示）---
+const jobResults = ref<StructuredContent['jobs']>([])
+
 function onStructured(payload: StructuredContent) {
+  // 右侧面板：用 all_jobs（完整岗位列表，优先）或 jobs
+  const all = payload.all_jobs || payload.jobs
+  if (all && all.length > 0) {
+    jobResults.value = all
+  }
+  // 聊天区：只有 full_recommendation 和 match_analysis 需要 StructuredMessage 渲染
+  const useStructured = payload.response_type === 'full_recommendation' || payload.response_type === 'match_analysis'
+  if (!useStructured) return
   for (let i = messages.value.length - 1; i >= 0; i--) {
     if (messages.value[i].role === 'assistant') {
       messages.value[i].structured = payload
@@ -373,7 +414,7 @@ async function scrollToBottom() {
             />
             <div
               :class="msg.structured ? 'msg-text-fallback' : 'msg-text'"
-            >{{ msg.content }}</div>
+              v-html="renderMarkdown(msg.content)"></div>
           </div>
           <div v-if="sending" class="chat-bubble assistant typing">正在思考...</div>
         </div>
@@ -445,6 +486,18 @@ async function scrollToBottom() {
 
         <!-- 求职偏好入口 -->
         <button class="pref-btn" @click="showPrefForm = true">&#9881; 求职偏好</button>
+        <label class="pref-btn upload-jobs-btn" :class="{ uploading: uploadingJobs }">
+          <span v-if="uploadingJobs" class="spinner" style="width:12px;height:12px;border-width:2px;margin-right:4px" />
+          {{ uploadingJobs ? '上传中...' : '📤 上传岗位' }}
+          <input
+            ref="jobsFileInput"
+            type="file"
+            accept=".json"
+            style="display:none"
+            :disabled="uploadingJobs"
+            @change="handleUploadJobs"
+          />
+        </label>
 
         <!-- 简历分区 -->
         <div class="resume-section">
@@ -464,6 +517,31 @@ async function scrollToBottom() {
           </div>
         </div>
       </div>
+
+      <!-- 岗位查询结果面板 -->
+      <div class="job-results-panel">
+        <div class="panel-header">
+          <span>查询结果（{{ jobResults.length }} 条）</span>
+        </div>
+        <div v-if="jobResults.length === 0" class="panel-empty">
+          暂无查询结果，输入筛选条件后自动展示
+        </div>
+        <el-table
+          v-else
+          :data="jobResults"
+          stripe
+          max-height="480"
+          size="small"
+          class="job-table"
+        >
+          <el-table-column prop="rank" label="#" width="40" />
+          <el-table-column prop="title" label="岗位名称" min-width="140" show-overflow-tooltip />
+          <el-table-column prop="company" label="公司" min-width="100" show-overflow-tooltip />
+          <el-table-column prop="salary" label="薪资" width="100" />
+          <el-table-column prop="experience" label="经验" width="80" />
+          <el-table-column prop="company_years" label="司龄" width="60" />
+        </el-table>
+      </div>
     </div>
 
     <!-- 求职偏好弹窗 -->
@@ -479,12 +557,6 @@ async function scrollToBottom() {
             <input v-model="preferences.city" placeholder="如：深圳、北京" maxlength="50" />
           </div>
           <div class="pref-row">
-            <label>工作模式</label>
-            <select v-model="preferences.work_mode">
-              <option v-for="o in workModeOptions" :key="o.value" :value="o.value">{{ o.label }}</option>
-            </select>
-          </div>
-          <div class="pref-row">
             <label>薪资范围（元/月）</label>
             <div class="pref-inline">
               <input v-model.number="preferences.salary_min" type="number" placeholder="如：20000" min="0" style="width:48%" />
@@ -493,30 +565,18 @@ async function scrollToBottom() {
             </div>
           </div>
           <div class="pref-row">
-            <label>偏好行业</label>
-            <input v-model="preferences.industry" placeholder="如：互联网、AI、金融" maxlength="50" />
-          </div>
-          <div class="pref-row">
-            <label>公司规模</label>
-            <input v-model="preferences.company_size" placeholder="如：500人以上、初创" maxlength="20" />
-          </div>
-          <div class="pref-row">
-            <label>技术方向</label>
-            <input v-model="preferences.tech_stack" placeholder="如：Python, AI Agent, FastAPI" maxlength="500" />
+            <label>岗位关键字</label>
+            <input v-model="preferences.job_keywords" placeholder="如：Python后端、AI Agent、前端开发" maxlength="50" />
           </div>
           <div class="pref-row">
             <label>经验年限</label>
-            <input v-model.number="preferences.experience_years" type="number" placeholder="如：3" min="0" style="width:100px" />
-          </div>
-          <div class="pref-row">
-            <label>求职状态</label>
-            <select v-model="preferences.job_status">
-              <option v-for="o in jobStatusOptions" :key="o.value" :value="o.value || null">{{ o.label }}</option>
+            <select v-model="preferences.experience_years">
+              <option v-for="o in expOptions" :key="o.value" :value="o.value || null">{{ o.label }}</option>
             </select>
           </div>
           <div class="pref-row">
-            <label>排除条件</label>
-            <input v-model="preferences.deal_breakers" placeholder="如：大小周、外包、996" maxlength="500" />
+            <label>公司成立时间（年）</label>
+            <input v-model.number="preferences.company_age" type="number" placeholder="如：5（成立5年以上）" min="0" style="width:160px" />
           </div>
         </div>
         <div class="pref-footer">
@@ -533,7 +593,11 @@ async function scrollToBottom() {
 
 <style scoped>
 .job-page {
-  max-width: 960px;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  max-width: 100%;
+  padding: 24px;
 }
 
 .page-title {
@@ -553,12 +617,14 @@ async function scrollToBottom() {
 .job-layout {
   display: flex;
   gap: 16px;
-  height: 520px;
+  flex: 1;
+  min-height: 0;
 }
 
 /* --- 聊天区 --- */
 .chat-card {
-  flex: 1;
+  flex: 3;
+  min-width: 300px;
   background: #fff;
   border-radius: 16px;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
@@ -574,7 +640,7 @@ async function scrollToBottom() {
   padding: 24px;
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 16px;
 }
 
 .chat-empty {
@@ -591,11 +657,11 @@ async function scrollToBottom() {
 }
 
 .chat-bubble {
-  max-width: 82%;
-  padding: 12px 16px;
+  max-width: 92%;
+  padding: 8px 14px;
   border-radius: 14px;
   font-size: 14px;
-  line-height: 1.6;
+  line-height: 1.45;
   word-break: break-word;
 }
 
@@ -604,7 +670,15 @@ async function scrollToBottom() {
   background: #2563eb;
   color: #fff;
   border-bottom-right-radius: 4px;
+  padding: 6px 16px;
+  line-height: 1.4;
 }
+.chat-bubble.user .msg-text {
+  line-height: 1.4;
+  display: flex;
+  align-items: center;
+}
+.chat-bubble.user .msg-text :deep(p) { margin: 0; }
 
 .chat-bubble.assistant {
   align-self: flex-start;
@@ -629,7 +703,61 @@ async function scrollToBottom() {
 }
 
 .msg-text {
-  white-space: pre-wrap;
+  line-height: 1.5;
+}
+.msg-text :deep(h1), .msg-text :deep(h2), .msg-text :deep(h3) {
+  font-size: 16px;
+  font-weight: 600;
+  margin: 8px 0 2px;
+  color: #1d1d1f;
+}
+.msg-text :deep(h3) { font-size: 15px; }
+.msg-text :deep(p) { margin: 2px 0; }
+.msg-text :deep(strong) { font-weight: 600; color: #1d1d1f; }
+.msg-text :deep(hr) { border: none; border-top: 1px solid #e5e7eb; margin: 8px 0; }
+.msg-text :deep(ul), .msg-text :deep(ol) { margin: 2px 0; padding-left: 20px; }
+.msg-text :deep(li) { margin: 1px 0; }
+.msg-text :deep(code) {
+  background: #f3f4f6;
+  padding: 1px 5px;
+  border-radius: 4px;
+  font-size: 13px;
+  font-family: 'SF Mono', 'Fira Code', monospace;
+}
+.msg-text :deep(blockquote) {
+  border-left: 3px solid #2563eb;
+  padding: 4px 12px;
+  margin: 8px 0;
+  color: #6b7280;
+  background: #fafafa;
+}
+/* markdown 表格 */
+.msg-text :deep(table) {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 10px 0;
+  font-size: 13px;
+}
+.msg-text :deep(th) {
+  background: #f5f5f7;
+  color: #6b7280;
+  font-weight: 600;
+  text-align: left;
+  padding: 8px 12px;
+  border-bottom: 2px solid #e5e7eb;
+  white-space: nowrap;
+}
+.msg-text :deep(td) {
+  padding: 8px 12px;
+  border-bottom: 1px solid #f0f0f0;
+  vertical-align: top;
+  line-height: 1.5;
+}
+.msg-text :deep(tr:last-child td) {
+  border-bottom: none;
+}
+.msg-text :deep(tr:hover td) {
+  background: #fafafa;
 }
 
 .msg-text-fallback {
@@ -734,10 +862,63 @@ async function scrollToBottom() {
   to { transform: rotate(360deg); }
 }
 
+/* --- 岗位查询结果面板 --- */
+.job-results-panel {
+  flex: 3;
+  min-width: 300px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 14px;
+  border-bottom: 1px solid #f0f0f0;
+  font-size: 13px;
+  font-weight: 600;
+  color: #1d1d1f;
+  flex-shrink: 0;
+}
+
+.panel-close {
+  background: none;
+  border: none;
+  font-size: 20px;
+  color: #86868b;
+  cursor: pointer;
+  padding: 0 2px;
+  line-height: 1;
+}
+
+.panel-close:hover {
+  color: #1d1d1f;
+}
+
+.panel-empty {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #9ca3af;
+  font-size: 13px;
+  padding: 40px 20px;
+  text-align: center;
+}
+
+.job-table {
+  flex: 1;
+}
+
 /* --- 会话侧边栏 --- */
 .session-sidebar {
-  width: 200px;
-  flex-shrink: 0;
+  flex: 1;
+  min-width: 160px;
   display: flex;
   flex-direction: column;
   gap: 12px;
@@ -864,6 +1045,18 @@ async function scrollToBottom() {
   background: #e5e5ea;
 }
 
+.upload-jobs-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.upload-jobs-btn.uploading {
+  background: #2563eb;
+  color: #fff;
+  pointer-events: none;
+}
+
 .pref-overlay {
   position: fixed;
   inset: 0;
@@ -916,7 +1109,7 @@ async function scrollToBottom() {
   padding: 20px;
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 16px;
 }
 
 .pref-row {
@@ -952,13 +1145,13 @@ async function scrollToBottom() {
 .pref-inline {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 16px;
 }
 
 .pref-footer {
   display: flex;
   justify-content: flex-end;
-  gap: 8px;
+  gap: 16px;
   padding: 14px 20px;
   border-top: 1px solid #f0f0f0;
 }
@@ -1031,7 +1224,7 @@ async function scrollToBottom() {
   color: #2563eb;
   font-size: 12px;
   font-weight: 500;
-  gap: 8px;
+  gap: 16px;
 }
 
 .resume-card.processing .spinner {

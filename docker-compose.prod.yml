@@ -1,0 +1,19 @@
+# 生产环境部署配置
+# 使用方式: docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build
+#
+# 与本地配置的区别：
+# - 模型存储在 named volume，首次启动自动从 HuggingFace 下载
+# - 前端 WebSocket URL 使用服务器 IP
+# - CORS 允许服务器 IP 访问
+# - 不使用本地 Windows 路径挂载
+
+services:
+  backend:
+    environment:
+      CORS_ORIGINS: "http://38.76.180.225"
+      HF_HUB_OFFLINE: "0"
+
+  nginx:
+    build:
+      args:
+        VITE_WS_BASE_URL: ws://38.76.180.225/api/v1

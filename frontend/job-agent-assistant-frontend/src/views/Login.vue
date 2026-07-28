@@ -1,35 +1,81 @@
 <script setup lang="ts">
-import { ref, reactive } from 'vue'
-import { useRouter } from 'vue-router'
+import { ref, reactive, computed } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
 import { useAuthStore } from '../stores/auth'
 import { ElMessage } from 'element-plus'
 
 const router = useRouter()
+const route = useRoute()
 const authStore = useAuthStore()
 
 const formRef = ref()
 const loading = ref(false)
+const isRegister = ref(false)
 
 const form = reactive({
   username: '',
   password: '',
+  confirmPassword: '',
 })
 
-const rules = {
-  username: [{ required: true, message: '请输入账号', trigger: 'blur' }],
-  password: [{ required: true, message: '请输入密码', trigger: 'blur' }],
+const rules = computed(() => {
+  const base: any = {
+    username: [{ required: true, message: '请输入账号', trigger: 'blur' }],
+    password: [
+      { required: true, message: '请输入密码', trigger: 'blur' },
+      { min: 6, message: '密码至少 6 位', trigger: 'blur' },
+    ],
+  }
+  if (isRegister.value) {
+    base.confirmPassword = [
+      { required: true, message: '请再次输入密码', trigger: 'blur' },
+      {
+        validator: (_rule: any, value: string, callback: any) => {
+          if (value !== form.password) {
+            callback(new Error('两次输入的密码不一致'))
+          } else {
+            callback()
+          }
+        },
+        trigger: 'blur',
+      },
+    ]
+  }
+  return base
+})
+
+function toggleMode() {
+  isRegister.value = !isRegister.value
+  form.username = ''
+  form.password = ''
+  form.confirmPassword = ''
+  formRef.value?.resetFields()
 }
 
-function handleLogin() {
+async function handleSubmit() {
   formRef.value?.validate(async (valid: boolean) => {
     if (!valid) return
     loading.value = true
-    const ok = await authStore.login(form.username, form.password)
-    loading.value = false
-    if (ok) {
-      router.push('/')
+
+    if (isRegister.value) {
+      const ok = await authStore.register(form.username, form.password)
+      loading.value = false
+      if (ok) {
+        ElMessage.success('注册成功')
+        const redirect = route.query.redirect as string
+        router.push(redirect || '/')
+      } else {
+        ElMessage.error('注册失败，该账号可能已被注册')
+      }
     } else {
-      ElMessage.error('账号或密码错误')
+      const ok = await authStore.login(form.username, form.password)
+      loading.value = false
+      if (ok) {
+        const redirect = route.query.redirect as string
+        router.push(redirect || '/')
+      } else {
+        ElMessage.error('账号或密码错误')
+      }
     }
   })
 }
@@ -41,7 +87,7 @@ function handleLogin() {
       <div class="login-header">
         <div class="logo">&#9906;</div>
         <h2>AI 找工作助手</h2>
-        <p>请登录您的账号</p>
+        <p>{{ isRegister ? '创建一个新账号' : '请登录您的账号' }}</p>
       </div>
 
       <el-form
@@ -49,7 +95,7 @@ function handleLogin() {
         :model="form"
         :rules="rules"
         label-position="top"
-        @keyup.enter="handleLogin"
+        @keyup.enter="handleSubmit"
       >
         <el-form-item label="账号" prop="username">
           <el-input
@@ -69,16 +115,33 @@ function handleLogin() {
           />
         </el-form-item>
 
+        <el-form-item v-if="isRegister" label="确认密码" prop="confirmPassword">
+          <el-input
+            v-model="form.confirmPassword"
+            type="password"
+            placeholder="请再次输入密码"
+            show-password
+            size="large"
+          />
+        </el-form-item>
+
         <el-button
           type="primary"
           size="large"
           :loading="loading"
           class="login-btn"
-          @click="handleLogin"
+          @click="handleSubmit"
         >
-          登 录
+          {{ isRegister ? '注 册' : '登 录' }}
         </el-button>
       </el-form>
+
+      <div class="toggle-row">
+        <span>{{ isRegister ? '已有账号？' : '没有账号？' }}</span>
+        <a class="toggle-link" @click="toggleMode">
+          {{ isRegister ? '立即登录' : '立即注册' }}
+        </a>
+      </div>
     </div>
   </div>
 </template>
@@ -129,6 +192,24 @@ function handleLogin() {
   margin-top: 8px;
   border-radius: 10px;
   font-size: 15px;
+}
+
+.toggle-row {
+  text-align: center;
+  margin-top: 20px;
+  font-size: 13px;
+  color: #86868b;
+}
+
+.toggle-link {
+  color: #2563eb;
+  cursor: pointer;
+  margin-left: 4px;
+  font-weight: 500;
+}
+
+.toggle-link:hover {
+  text-decoration: underline;
 }
 
 :deep(.el-form-item__label) {

@@ -48,6 +48,8 @@ class AgentState(TypedDict):
     messages: Annotated[list, add_messages]
     user_id: int  # 供 tool 检索时过滤归属
     structured_content: dict | None  # format_response_node 写入的结构化 JSON
+    sql_jobs: list[dict] | None  # SQL Agent 返回的完整岗位列表，直接传给前端
+    conversation_summary: str | None  # 增量摘要，超长对话时压缩早期消息
 
 
 # ============================================================
@@ -59,6 +61,7 @@ llm = ChatOpenAI(
     base_url=settings.DEEPSEEK_BASE_URL,
     temperature=0,
     request_timeout=30,
+    extra_body={"ep_enable_prompt_caching": True},
 )
 
 # 结构化格式化 LLM（非流式，with_structured_output）
@@ -68,6 +71,7 @@ structured_llm = ChatOpenAI(
     base_url=settings.DEEPSEEK_BASE_URL,
     temperature=0,
     request_timeout=15,
+    extra_body={"ep_enable_prompt_caching": True},
 ).with_structured_output(StructuredResponse, method="json_mode")
 
 
@@ -76,21 +80,23 @@ structured_llm = ChatOpenAI(
 # ============================================================
 @tool
 async def search_resume(query: str) -> str:
-    """搜索用户上传的PDF简历内容。触发场景：「分析简历」「推荐适合我的」「根据我的背景」「我的经验」「匹配度」「适合我吗」「优化简历」「改简历」「打招呼语」「自我介绍」。
-    参数 query: 提取用户原话中的关键技能词，如「所有技能」「Python项目」「教育背景」。
-    全流程推荐模式下与 search_jobs 同时调用。每轮最多调用一次。"""
+    """搜索和分析用户上传的PDF简历。仅以下场景调用，每轮最多一次。
+    触发：「分析我的简历」「分析简历」「根据我的背景」「推荐适合我的」「匹配度」「适合我吗」「优化简历」「改简历」「打招呼语」「自我介绍」「我的经验」「我的技能」。
+    参数 query: 用户问题中的关键词，如「所有技能」「Python项目」「教育背景」。
+    注意：此工具只查简历内容，不查岗位。需要同时查岗位时另行调用 delegate_to_sql_agent。"""
     return ""
 
 
 @tool
-async def search_jobs(query: str) -> str:
-    """搜索真实招聘岗位数据库。触发场景：「看看岗位」「推荐」「找工作」「有什么职位」「匹配」「适合」「优化简历」「针对JD」。
-    参数 query: 用户原话中的岗位/技术关键词，如「AI Agent开发」「Python后端」。
-    全流程推荐模式下与 search_resume 同时调用。每轮最多调用一次，禁止换关键词反复搜索。"""
+async def delegate_to_sql_agent(query: str) -> str:
+    """查询招聘岗位数据库。仅在用户明确要求搜索/查看/推荐岗位时调用。
+    触发：「看看岗位」「有什么职位」「找XX岗位」「推荐岗位」「帮我推荐下」「深圳 Python」「浏览岗位」。
+    不触发：分析简历、优化简历、打招呼语、自我介绍、面试准备——这些只需要查简历，不需要此工具。
+    参数 query: 搜索条件如「Python后端 苏州 20K以上 3-5年 本科」。无具体条件时写「推荐 岗位」。每轮最多一次。"""
     return ""
 
 
-tools = [search_resume, search_jobs]
+tools = [search_resume, delegate_to_sql_agent]
 
 
 # ============================================================
@@ -103,18 +109,21 @@ JOB_ADVISOR_PROMPT = sanitize("""
 
 | 用户说法 | 模式 | 工具调用 |
 |---------|------|---------|
-| 「看看岗位」「有什么职位」「深圳 Python」「找 AI 岗位」 | **浏览模式** | 只调 search_jobs |
-| 「推荐适合我的」「根据我的背景」「我适合什么」「帮我推荐」 | **全流程推荐** | search_resume + search_jobs（同时调用） |
+| 「看看岗位」「有什么职位」「深圳 Python」「找 AI 岗位」「推荐岗位」「帮我推荐下」 | **浏览模式** | 只调 delegate_to_sql_agent |
+| 「分析简历」「分析我的简历」「优化简历」「打招呼语」「自我介绍」 | **简历分析** | 只调 search_resume，不要调 delegate_to_sql_agent |
+| 「推荐适合我的」「根据我的背景匹配」「我适合什么岗位」「分析匹配」 | **全流程推荐** | search_resume + delegate_to_sql_agent（同时调用） |
 
 **【核心规则——必须严格遵守】**
 
 1. 每个工具每轮最多调用一次。全流程推荐时同时调用两个工具（共 2 个 tool_call）。
 2. 接受检索结果，禁止换关键词反复搜索。无匹配时如实告知并列出最接近的替代。
 3. 全流程推荐/匹配分析/简历优化场景允许双工具调用，之后必须给出最终回答。
+4. **关键判断规则**：用户只说「推荐岗位」「帮我推荐下」「看看有什么岗位」没有提「适合我」「我的背景」→ 浏览模式只调 delegate_to_sql_agent。不确定时默认走浏览模式。
+5. **调工具时只输出简短提示语**（如「正在查询...」「好的，帮你搜索...」），**禁止在调用工具前编造任何岗位数据或表格**。所有岗位信息必须来自工具返回结果。
 
 **【全流程推荐模板】（用户说「推荐适合我的」时使用）**
 
-第一步：同时调用 search_resume + search_jobs
+第一步：同时调用 search_resume + delegate_to_sql_agent
 第二步：基于返回结果，按以下结构回复——
 
 **📋 为你推荐以下岗位**
@@ -144,7 +153,7 @@ JOB_ADVISOR_PROMPT = sanitize("""
 
 **【浏览模式模板】（用户说「看看岗位」时使用）**
 
-1. 调用 search_jobs → 用表格列出 3-5 个岗位
+1. 调用 delegate_to_sql_agent → 用表格列出 3-5 个岗位
 2. 末尾加新用户引导（仅首次）：「💡 上传简历可获匹配度分析，设置偏好可精准推荐。」
 3. 不追问下一步，简洁收尾
 
@@ -268,25 +277,16 @@ async def _get_preferences_prompt(user_id: int) -> str:
         parts = []
         if pref.get("city"):
             parts.append(f"- 期望城市：{pref['city']}")
-        if pref.get("work_mode"):
-            mode_map = {"remote": "远程", "onsite": "现场", "hybrid": "混合"}
-            parts.append(f"- 工作模式：{mode_map.get(pref['work_mode'], pref['work_mode'])}")
         if pref.get("salary_min") or pref.get("salary_max"):
             smin = pref.get("salary_min") or ""
             smax = pref.get("salary_max") or ""
             parts.append(f"- 薪资期望：{smin:,}-{smax:,} 元/月")
-        if pref.get("industry"):
-            parts.append(f"- 偏好行业：{pref['industry']}")
-        if pref.get("company_size"):
-            parts.append(f"- 公司规模偏好：{pref['company_size']}")
-        if pref.get("tech_stack"):
-            parts.append(f"- 技术方向：{pref['tech_stack']}")
+        if pref.get("job_keywords"):
+            parts.append(f"- 岗位关键字：{pref['job_keywords']}")
         if pref.get("experience_years"):
-            parts.append(f"- 工作经验：{pref['experience_years']} 年")
-        if pref.get("job_status"):
-            parts.append(f"- 求职状态：{pref['job_status']}")
-        if pref.get("deal_breakers"):
-            parts.append(f"- 排除条件：{pref['deal_breakers']}")
+            parts.append(f"- 工作经验：{pref['experience_years']}")
+        if pref.get("company_age"):
+            parts.append(f"- 公司成立年限要求：{pref['company_age']} 年以上")
 
         if not parts:
             return ""
@@ -302,11 +302,50 @@ async def _get_preferences_prompt(user_id: int) -> str:
         return ""
 
 
+async def _build_preference_context(user_id: int) -> str:
+    """读取用户偏好，格式化为 SQL 查询条件提示（简洁键值对）"""
+    try:
+        from psycopg.rows import dict_row
+        async with _pool.connection() as conn:
+            cur = await conn.execute(
+                "SELECT city, salary_min, salary_max, job_keywords, experience_years, company_age "
+                "FROM user_preferences WHERE user_id = %s",
+                (user_id,),
+            )
+            row = await cur.fetchone()
+            if not row:
+                return ""
+            cols = [c.name for c in cur.description] if cur.description else []
+            pref = dict(zip(cols, row)) if cols else {}
+
+        parts = []
+        if pref.get("city"):
+            parts.append(f"城市={pref['city']}")
+        if pref.get("salary_min") or pref.get("salary_max"):
+            parts.append(f"月薪={pref.get('salary_min', '')}-{pref.get('salary_max', '')}")
+        if pref.get("job_keywords"):
+            parts.append(f"岗位关键字={pref['job_keywords']}")
+        if pref.get("experience_years"):
+            parts.append(f"经验={pref['experience_years']}")
+        if pref.get("company_age"):
+            parts.append(f"公司成立年限>={pref['company_age']}年（只查 established_date 不为空且成立超过此年数的公司）")
+        return "; ".join(parts) if parts else ""
+    except Exception:
+        logger.exception("读取用户偏好失败")
+        return ""
+
+
 async def job_advisor_node(state: AgentState) -> dict:
+    from api.agent.context_manager import manage_context, get_summarize_llm
+
     user_id = state.get("user_id", 0)
     pref_prompt = await _get_preferences_prompt(user_id)
     system_content = JOB_ADVISOR_PROMPT + pref_prompt
-    full_messages = [SystemMessage(content=system_content)] + state["messages"]
+
+    # 上下文窗口管理：裁剪旧 ToolMessage + 超长对话增量摘要
+    full_messages, ctx_mutations = await manage_context(
+        state, system_content, get_summarize_llm()
+    )
 
     safe_messages = []
     for m in full_messages:
@@ -354,7 +393,9 @@ async def job_advisor_node(state: AgentState) -> dict:
         full = chunk if full is None else full + chunk  # type: ignore[assignment]
 
     if full is None:
-        return {"messages": [AIMessage(content="")]}
+        result = dict(ctx_mutations)
+        result["messages"] = result.get("messages", []) + [AIMessage(content="")]
+        return result
 
     has_tool_calls = bool(getattr(full, "tool_calls", None))
     logger.info(
@@ -362,18 +403,21 @@ async def job_advisor_node(state: AgentState) -> dict:
         f"tool_calls: {has_tool_calls}，"
         f"本轮后消息总数: {len(state['messages']) + 1}"
     )
-    return {"messages": [full]}
+    result = dict(ctx_mutations)
+    result["messages"] = result.get("messages", []) + [full]
+    return result
 
 
 async def execute_tools(state: AgentState) -> dict:
     """执行 search_resume / search_jobs 工具调用"""
     from api.rag.embedder import embed
-    from api.rag.store import search as vector_search, search_jobs as job_search
+    from api.rag.store import search as vector_search
 
     last_msg = state["messages"][-1]
     user_id = state.get("user_id", 0)
 
     tool_messages = []
+    all_jobs = None
     for tc in last_msg.tool_calls:
         if tc["name"] == "search_resume":
             query = tc["args"].get("query", "")
@@ -386,24 +430,59 @@ async def execute_tools(state: AgentState) -> dict:
                 content = "简历中未找到与您问题相关的内容。请确认简历已上传。"
             tool_messages.append(ToolMessage(content=content, tool_call_id=tc["id"]))
 
-        elif tc["name"] == "search_jobs":
+        elif tc["name"] == "delegate_to_sql_agent":
             query = tc["args"].get("query", "")
-            logger.info(f"Tool search_jobs 被调用 query={query[:50]}")
-            q_emb = embed([query])[0]
-            jobs = await job_search(get_pool(), q_emb)
-            if jobs:
-                lines = []
-                for j in jobs:
-                    lines.append(
-                        f"- {j['title']} | {j['company']} | {j['salary']} | "
-                        f"{j['experience']} | {j['education']}\n  {j['description'][:200]}"
-                    )
-                content = "\n".join(lines)
-            else:
-                content = "未找到匹配的岗位，请尝试更换搜索条件。"
+            logger.info(f"Tool delegate_to_sql_agent 被调用 user={user_id} query={query[:80]}")
+
+            # 读取用户偏好作为默认条件注入
+            pref_ctx = await _build_preference_context(user_id)
+            augmented_query = query
+            if pref_ctx:
+                augmented_query = (
+                    f"用户查询条件（优先）：{query}\n"
+                    f"用户偏好默认条件（用户未指定时使用）：{pref_ctx}"
+                )
+
+            from api.agent.sql_graph import get_sql_graph
+            sql_graph = get_sql_graph()
+            try:
+                # 无 config → 不持久化 checkpoints，子Agent调用是短暂的
+                result = await sql_graph.ainvoke({
+                    "messages": [HumanMessage(content=augmented_query)],
+                    "user_id": user_id,
+                    "sql_query": None,
+                    "sql_error": None,
+                    "retry_count": 0,
+                    "query_results": None,
+                    "structured_content": None,
+                })
+
+                all_jobs = None
+                structured = result.get("structured_content")
+                if structured and structured.get("jobs"):
+                    all_jobs = structured["jobs"]
+                    jobs = all_jobs
+                    summary = structured.get("summary", "")
+                    lines = [f"{summary}"]
+                    for j in jobs[:10]:
+                        lines.append(
+                            f"- {j.get('title', '')} | {j.get('company', '')} | "
+                            f"{j.get('salary', '')} | {j.get('experience', '')}"
+                        )
+                    if len(jobs) > 10:
+                        lines.append(f"\n（共 {len(jobs)} 条，此处列出前 10 条，完整列表已展示在右侧面板）")
+                    content = "\n".join(lines)
+                elif structured and structured.get("summary"):
+                    content = structured["summary"]
+                else:
+                    content = "未找到匹配的岗位，请尝试放宽搜索条件。"
+            except Exception as e:
+                logger.exception("SQL Agent 子图调用失败")
+                content = f"岗位查询出错：{e}。请稍后重试或尝试更具体的查询条件。"
+                all_jobs = None
             tool_messages.append(ToolMessage(content=content, tool_call_id=tc["id"]))
 
-    return {"messages": tool_messages}
+    return {"messages": tool_messages, "sql_jobs": all_jobs}
 
 
 # ============================================================
@@ -425,7 +504,7 @@ FORMAT_PROMPT = """你是一个响应格式化器。将下方求职顾问的回�
 - skill_comparisons 数组：提取 requirement/match_level(match/partial/missing)/your_status/note
 - overall_match：整数 0-100，仅 match_analysis 模式
 - strengths/weaknesses：字符串数组
-- highlights：[{original, suggestion}] 格式
+- highlights：[{{original, suggestion}}] 格式
 - 无对应内容时字段留空数组或 null
 
 求职顾问回复：
@@ -443,14 +522,22 @@ async def format_response_node(state: AgentState) -> dict:
     if not content or not isinstance(content, str) or len(content.strip()) < 10:
         return {"structured_content": None}
 
+    # 快速路径：直接从 LLM 回复末尾提取 JSON
+    from api.agent.schemas import extract_structured_json
+    parsed = extract_structured_json(content)
+    if parsed is not None:
+        logger.info(f"快速提取结构化成功 response_type={parsed.response_type}")
+        return {"structured_content": parsed.model_dump()}
+
+    # 慢路径：LLM 二次调用格式化
     try:
         result: StructuredResponse = await structured_llm.ainvoke([
             HumanMessage(content=FORMAT_PROMPT.format(content=content))
         ])
-        logger.info(f"结构化输出成功 response_type={result.response_type}")
+        logger.info(f"LLM 结构化输出成功 response_type={result.response_type}")
         return {"structured_content": result.model_dump()}
     except Exception:
-        logger.exception("结构化输出格式化失败，回退纯文本")
+        logger.warning("结构化输出格式化失败，回退纯文本")
         return {"structured_content": None}
 
 

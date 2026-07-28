@@ -1,16 +1,21 @@
 import apiClient from './client'
 
-interface LoginData {
+interface AuthData {
   token: string
 }
 
 export interface UserInfo {
   id: number
   username: string
+  role: string
 }
 
 export function loginApi(username: string, password: string) {
-  return apiClient.post<LoginData>('/auth/login', { username, password })
+  return apiClient.post<AuthData & { role: string }>('/auth/login', { username, password })
+}
+
+export function registerApi(username: string, password: string) {
+  return apiClient.post<AuthData & { role: string }>('/auth/register', { username, password })
 }
 
 export function fetchUserInfo() {

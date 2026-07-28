@@ -1,0 +1,399 @@
+[
+  {
+    "index": 0,
+    "question": "Run Page有哪些执行模式和执行状态？",
+    "retrieval": {
+      "rewritten_queries": [
+        "Run Page 执行模式 On Line Off Line",
+        "Run Page 执行状态 Ready Cycle Cycle Stop"
+      ],
+      "dense_hits": 10,
+      "bm25_hits": 2,
+      "fused_candidates": 7,
+      "reranked_candidates": 5,
+      "passed_candidates": 1,
+      "all_filtered": false,
+      "latency_ms": 48171,
+      "passed": [
+        {
+          "rank": 1,
+          "section": "1. Run Page (生產執行操作頁面)",
+          "document_name": "3200 Optimized User Manual V1.2.doc",
+          "dense_similarity": 0.6979,
+          "bm25_score": null,
+          "rrf_score": 0.032787,
+          "rerank_score": 0.9858,
+          "content": "文档：3200 Optimized User Manual V1.2.doc\n1. Run Page (生產執行操作頁面)\n生產執行畫面:\n\n使用者模式，按下後會跳出使用者選擇視窗，以便切換使用者\n使用者共區分User()、Setup()、Engineer()三種模式。\n\nTest Site狀態顯示；Site開啟狀態顯示及Test Site目前測試的Bin Code；IC的測試結果，綠色為Pass，紅色及黃色為Fail。\n\n目前執行的模式，分別有On Line/Normal、Off Line/Normal、Off Line/No Device、Off Line/ No Device No Tray。\n\n目前執行狀態，分別有UnInitial、Ready、Cycle、Cycle Stop、One Cycle、One Cycle Stop。\n\nMatrixCode Information，顯示目前 Camera 辨識的 Barcode 資訊。\n\nIndex Time，顯示目前Site的Index Time。\n\n顯示每個Lot的Cycle Time。\n\nUPH顯示目前機台每小時產出。\n\nTo",
+          "content_full": "文档：3200 Optimized User Manual V1.2.doc\n1. Run Page (生產執行操作頁面)\n生產執行畫面:\n\n使用者模式，按下後會跳出使用者選擇視窗，以便切換使用者\n使用者共區分User()、Setup()、Engineer()三種模式。\n\nTest Site狀態顯示；Site開啟狀態顯示及Test Site目前測試的Bin Code；IC的測試結果，綠色為Pass，紅色及黃色為Fail。\n\n目前執行的模式，分別有On Line/Normal、Off Line/Normal、Off Line/No Device、Off Line/ No Device No Tray。\n\n目前執行狀態，分別有UnInitial、Ready、Cycle、Cycle Stop、One Cycle、One Cycle Stop。\n\nMatrixCode Information，顯示目前 Camera 辨識的 Barcode 資訊。\n\nIndex Time，顯示目前Site的Index Time。\n\n顯示每個Lot的Cycle Time。\n\nUPH顯示目前機台每小時產出。\n\nTotal顯示目前總產出數量。\n\nDevice Setting Lot 設定，顯示目前設定的 Tray file。\n\nYield相關設定顯示。\n\n關機按鈕，此按鈕只能關閉程式，電腦與機台關機，請用手動。\n\nIO monitor，觀看所有IO的狀態。\n\nEvent Log，記錄系統執行後所發生的事件，以便提供一些初步的問題參考資訊。\n\nMotor monitor，觀看所有馬達的狀態。\n\nOutput Tray Map，觀看所有Output Tray 上的IC測試結果、Bin Code、Data Matrix Code。\n\nCategory Setup，觀看或設定目前的Category分類。\n\nManual Test，進行手動驗證使用。\n\nYield Control,此頁面可以設定相關Yield設定值。\n\nBin Log ,可以察看每個Site測試結果。\n\nHardware Bin。\n\n該Tray 指定的 Tray file。\n\nCategory設定狀態。\n\n置入該Tray的Device數量及良率(數量/良率)。\n\nLot Information設定/檢視鈕，按下後可開啟Lot Information視窗。\n\n結批，點開後可以選擇哪一個 Lot，列印報表並清除數量。"
+        }
+      ]
+    },
+    "answer": {
+      "text": "根據《3200 Optimized User Manual V1.2.doc》1. Run Page (生產執行操作頁面)章節：\n\n**執行模式**包含以下四種：\n- On Line/Normal\n- Off Line/Normal\n- Off Line/No Device\n- Off Line/No Device No Tray\n\n**執行狀態**包含以下六種：\n- UnInitial\n- Ready\n- Cycle\n- Cycle Stop\n- One Cycle\n- One Cycle Stop",
+      "latency_ms": 2015
+    }
+  },
+  {
+    "index": 1,
+    "question": "Offset Setting的操作步骤是什么？",
+    "retrieval": {
+      "rewritten_queries": [
+        "Offset Setting 操作步骤",
+        "各軸位置修正設定 操作流程",
+        "Offset Setting 操作画面"
+      ],
+      "dense_hits": 15,
+      "bm25_hits": 0,
+      "fused_candidates": 10,
+      "reranked_candidates": 5,
+      "passed_candidates": 1,
+      "all_filtered": false,
+      "latency_ms": 63422,
+      "passed": [
+        {
+          "rank": 1,
+          "section": "3. Setup Page (設定工程師操作頁面) > 3.1 Offset Setting (各軸位置修正設定)",
+          "document_name": "3200 Optimized User Manual V1.2.doc",
+          "dense_similarity": 0.6674,
+          "bm25_score": null,
+          "rrf_score": 0.016393,
+          "rerank_score": 0.9248,
+          "content": "文档：3200 Optimized User Manual V1.2.doc\n3. Setup Page (設定工程師操作頁面)\n3.1 Offset Setting (各軸位置修正設定)\n當Robot吸/放貨的位置有些許誤差時，可以使用Offset的設定功能來進行微調。\n\n以機台正面為主，調整Pick X、Pick Y、Pick Z、Place X、Place Y、Place Z Offset的值。\n\nFront Arm Stack & Fix Tray Offset\n\nPlace X: 設定 Stack 1 ~ Stack 6、Fix Tray 1 ~ Fix Tray 6 Place 動作 X 方向 Offset (單位: mm)。\n\nPlace Y: 設定 Stack 1 ~ Stack 6、Fix Tray 1 ~ Fix Tray 6 Place 動作 Y 方向 Offset (單位: mm)。\n\nPlace Z: 設定 Stack 1 ~ Stack 6、Fix Tray 1 ~ Fix Tray 6 Place 動作 Z 方向 Offset (單位: mm)。\n\nSav",
+          "content_full": "文档：3200 Optimized User Manual V1.2.doc\n3. Setup Page (設定工程師操作頁面)\n3.1 Offset Setting (各軸位置修正設定)\n當Robot吸/放貨的位置有些許誤差時，可以使用Offset的設定功能來進行微調。\n\n以機台正面為主，調整Pick X、Pick Y、Pick Z、Place X、Place Y、Place Z Offset的值。\n\nFront Arm Stack & Fix Tray Offset\n\nPlace X: 設定 Stack 1 ~ Stack 6、Fix Tray 1 ~ Fix Tray 6 Place 動作 X 方向 Offset (單位: mm)。\n\nPlace Y: 設定 Stack 1 ~ Stack 6、Fix Tray 1 ~ Fix Tray 6 Place 動作 Y 方向 Offset (單位: mm)。\n\nPlace Z: 設定 Stack 1 ~ Stack 6、Fix Tray 1 ~ Fix Tray 6 Place 動作 Z 方向 Offset (單位: mm)。\n\nSave: 點選後，將目前Offset欄位資料作儲存動作。\n\nClose: 點選後，離開Offset頁面。\n\nFront Arm Rotator Offset\n\nPick X: 設定 Rotator 1、Rotator 2 Pick 動作 X 方向 Offset (單位: mm)。\n\nPick Y: 設定 Rotator 1、Rotator 2 Pick 動作 Y 方向 Offset (單位: mm)。\n\nPick Z: 設定 Rotator 1、Rotator 2 Pick 動作 Z 方向 Offset (單位: mm)。\n\nPlace X: 設定 Rotator 1、Rotator 2 Place 動作 X 方向 Offset (單位: mm)。\n\nPlace Y: 設定 Rotator 1、Rotator 2 Place 動作 Y 方向 Offset (單位: mm)。\n\nPlace Z: 設定 Rotator 1、Rotator 2 Place 動作 Z 方向 Offset (單位: mm)。\n\nSave: 點選後，將目前Offset欄位資料作儲存動作。\n\nClose: 點選後，離開Offset頁面。\n\nFront Arm Trolley#1~#4 Offset\n\nPick X: 設定 Front Arm Trollet#1~#4 Pick 動作 X 方向 Offset (單位: mm)。\n\nPick Y: 設定 Front Arm Trollet#1~#4 Pick 動作 Y 方向 Offset (單位: mm)。\n\nPick Z: 設定 Front Arm Trollet#1~#4 Pick 動作 Z 方向 Offset (單位: mm)。\n\nSave: 點選後，將目前Offset欄位資料作儲存動作。\n\nClose: 點選後，離開Offset頁面。\n\nBack Arm Stack & Fix Tray Offset\n\nPick X: 設定 Stack 1 ~ Stack 6、Fix Tray 1 ~ Fix Tray 6 Pick 動作 X 方向 Offset (單位: mm)。\n\nPick Y: 設定 Stack 1 ~ Stack 6、Fix Tray 1 ~ Fix Tray 6 Pick 動作 Y 方向 Offset (單位: mm)。\n\nPick Z: 設定 Stack 1 ~ Stack 6、Fix Tray 1 ~ Fix Tray 6 Pick 動作 Z 方向 Offset (單位: mm)。\n\nSave: 點選後，將目前Offset欄位資料作儲存動作。\n\nClose: 點選後，離開Offset頁面。\n\nBack Arm Rotator Offset\n\nPick X: 設定 Rotator Pick 動作 X 方向 Offset (單位: mm)c。\n\nPick Y: 設定 Rotator Pick 動作 Y 方向 Offset (單位: mm)。\n\nPick Z: 設定 Rotator Pick動作 Z 方向 Offset (單位: mm)。\n\nPlace X: 設定 Rotator Place 動作 X 方向 Offset (單位: mm)。\n\nPlace Y: 設定 Rotator Place 動作 Y 方向 Offset (單位: mm)。\n\nPlace Z: 設定 Rotator Place 動作 Z 方向 Offset (單位: mm)。\n\nSave: 點選後，將目前Offset欄位資料作儲存動作。\n\nClose: 點選後，離開Offset頁面。\n\nBack Arm Trolley#1~#4 Offset\n\nPick X: 設定 Stack 1 ~ Stack 6、Fix Tray 1 ~ Fix Tray 6 Pick 動作 X 方向 Offset (單位: mm)。\n\nPick Y: 設定 Stack 1 ~ Stack 6、Fix Tray 1 ~ Fix Tray 6 Pick 動作 Y 方向 Offset (單位: mm)。\n\nPick Z: 設定 Stack 1 ~ Stack 6、Fix Tray 1 ~ Fix Tray 6 Pick 動作 Z 方向 Offset (單位: mm)。\n\nPlace X: 設定 Stack 1 ~ Stack 6、Fix Tray 1 ~ Fix Tray 6 Place 動作 X 方向 Offset (單位: mm)。\n\nPlace Y: 設定 Stack 1 ~ Stack 6、Fix Tray 1 ~ Fix Tray 6 Place 動作 Y 方向 Offset (單位: mm)。\n\nPlace Z: 設定 Stack 1 ~ Stack 6、Fix Tray 1 ~ Fix Tray 6 Place 動作 Z 方向 Offset (單位: mm)。\n\nSave: 點選後，將目前Offset欄位資料作儲存動作。\n\nClose: 點選後，離開Offset頁面。\n\nTest Site Contact Trollet#1~#4 Offset\n\nContact Z: 設定 Trolley 1 ~ Trolley4 Contact 深度Offset (單位: mm)。\n\nSave: 點選後，將目前Offset欄位資料作儲存動作。\n\nClose: 點選後，離開Offset頁面。\n\nTS In Shuttle Offset: Shuttle In\n\n調整Trolley1~4 每Site Pick深度Offset (單位: mm)。\n\nShuttle Out: 調整Trolley1~4 每Site Place深度Offset (單位: mm)。\n\nSave: 點選後，將目前Offset欄位資料作儲存動作。\n\nClose: 點選後，離開Offset頁面。\n\nRotator Offset\n\nAngle: 設定 Rotator 1、Rotator 2 旋轉角度 Offset (單位: Deg)。\n\nSave: 點選後，將目前Offset欄位資料作儲存動作。\n\nClose: 點選後，離開Offset頁面。\n\nTray Transfer Offset\n\nPick X: 設定 Empty 1、Empty 2、Stack 1 ~ Stack 6 Pick 動作 X 方向 Offset (單位: mm)。\n\nPlace X: 設定 Empty 1、Empty 2、Stack 1 ~ Stack 6 Place 動作 X 方向 Offset (單位: mm)。\n\nSave: 點選後，將目前Offset欄位資料作儲存動作。\n\nClose: 點選後，離開Offset頁面。\n\nTest Arm Force\n\nSet Value: 設定 Trollet1~4內各Site Force (單位: Kg)。\n\nSave: 點選後，將目前Offset欄位資料作儲存動作。\n\nClose: 點選後，離開Offset頁面。"
+        }
+      ]
+    },
+    "answer": {
+      "text": "根據《3200 Optimized User Manual V1.2.doc》3.1 Offset Setting 章節，Offset Setting 的操作步驟如下：\n\n1. **進入設定頁面**  \n   在 Setup 頁面中開啟 Offset Setting（各軸位置修正設定）功能介面。\n\n2. **選擇要調整的機械手臂區域**  \n   機台提供多個獨立區域的偏移設定，包括：  \n   - Front Arm Stack & Fix Tray Offset（前臂堆疊／固定托盤）  \n   - Front Arm Rotator Offset（前臂旋轉器）  \n   - Front Arm Trolley#1~#4 Offset（前臂推車）  \n   - Back Arm Stack & Fix Tray Offset（後臂堆疊／固定托盤）  \n   - Back Arm Rotator Offset（後臂旋轉器）  \n   - Back Arm Trolley#1~#4 Offset（後臂推車）  \n   - Test Site Contact Trolley#1~#4 Offset（測試站接觸深度）  \n   - TS In Shuttle Offset（進出梭車深度）  \n   - Rotator Offset（旋轉角度）  \n   - Tray Transfer Offset（托盤傳送）  \n   - Test Arm Force（測試臂力量）\n\n3. **根據需要輸入偏移值**  \n   在各區域內調整對應軸向的數值（單位：mm，Rotator Offset 單位：Deg，Test Arm Force 單位：Kg）。  \n   例如：Pick X、Pick Y、Pick Z、Place X、Place Y、Place Z、Contact Z、Shuttle In/Out、Angle 等。\n\n4. **儲存設定**  \n   點選該區域的 **Save** 按鈕，將目前欄位資料儲存。\n\n5. **關閉頁面**  \n   點選 **Close** 按鈕，離開 Offset 頁面。\n\n⚠️ 注意：每個區域的偏移值獨立儲存，修改後務必先按 Save 再關閉，否則修改將不會生效。如有安全相關微調（如力量設定），請依原廠規範操作。",
+      "latency_ms": 9311
+    }
+  },
+  {
+    "index": 2,
+    "question": "如何进行Auto Alignment自动校准？",
+    "retrieval": {
+      "rewritten_queries": [
+        "Auto Alignment 自动位置校正 操作",
+        "Auto Alignment 自动位置校正 步骤"
+      ],
+      "dense_hits": 10,
+      "bm25_hits": 1,
+      "fused_candidates": 6,
+      "reranked_candidates": 5,
+      "passed_candidates": 1,
+      "all_filtered": false,
+      "latency_ms": 52218,
+      "passed": [
+        {
+          "rank": 1,
+          "section": "4. Engineer Page (系統工程師操作頁面) > 4.14 Auto Alignment (自動位置校正)",
+          "document_name": "3200 Optimized User Manual V1.2.doc",
+          "dense_similarity": 0.7333,
+          "bm25_score": null,
+          "rrf_score": 0.032787,
+          "rerank_score": 0.967,
+          "content": "文档：3200 Optimized User Manual V1.2.doc\n4. Engineer Page (系統工程師操作頁面)\n4.14 Auto Alignment (自動位置校正)\n當手臂位置錯誤過大時(可能由於拆裝某些組件造成)，可利用此功能重新設定位置，可選擇 Robot、Motor、Lidar 位置校正。\n\nRobot Initial Start: 單獨對Robot Initial\n\nRobot Initial Start: 停止 Initial 動作\n\nSelect All\n\n選擇全部位置: Alignment Start\n\n自動進行原點校正: Alignment Stop\n\n停止 Alignment 動作\n\nClose: 點選後，離開Alignment頁面。",
+          "content_full": "文档：3200 Optimized User Manual V1.2.doc\n4. Engineer Page (系統工程師操作頁面)\n4.14 Auto Alignment (自動位置校正)\n當手臂位置錯誤過大時(可能由於拆裝某些組件造成)，可利用此功能重新設定位置，可選擇 Robot、Motor、Lidar 位置校正。\n\nRobot Initial Start: 單獨對Robot Initial\n\nRobot Initial Start: 停止 Initial 動作\n\nSelect All\n\n選擇全部位置: Alignment Start\n\n自動進行原點校正: Alignment Stop\n\n停止 Alignment 動作\n\nClose: 點選後，離開Alignment頁面。"
+        }
+      ]
+    },
+    "answer": {
+      "text": "根據檢索到的內容，Auto Alignment（自動位置校正）的操作流程如下：\n\n1. **進入校正介面**：在 Engineer Page（系統工程師操作頁面）中找到並開啟 Auto Alignment 功能。\n2. **選擇校正項目**：可選擇單獨校正 Robot（機械手臂）、Motor（馬達）或 Lidar（雷射雷達），或點選「Select All」選擇全部項目進行校正。\n3. **進行校正**：點選「Alignment Start」按鈕，系統會自動進行原點校正。\n4. **停止校正**（如有需要）：點選「Alignment Stop」可停止校正動作。\n5. **完成後退出**：點選「Close」離開 Alignment 頁面。\n\n**額外說明**：\n- 若需單獨對 Robot 進行初始設定，可使用「Robot Initial Start」按鈕；「Robot Initial Stop」則用於停止 Robot Initial 動作。\n- 此功能通常用於手臂位置錯誤過大時（例如因拆裝某些組件導致），透過自動校正重新設定位置。\n\n根據《3200 Optimized User Manual V1.2.doc》4. Engineer Page > 4.14 Auto Alignment 章節。",
+      "latency_ms": 6328
+    }
+  },
+  {
+    "index": 3,
+    "question": "操作3200设备时有哪些安全注意事项？",
+    "retrieval": {
+      "rewritten_queries": [
+        "3200 安全操作 注意事项",
+        "3200 Safety Operation Precautions"
+      ],
+      "dense_hits": 9,
+      "bm25_hits": 0,
+      "fused_candidates": 5,
+      "reranked_candidates": 5,
+      "passed_candidates": 1,
+      "all_filtered": false,
+      "latency_ms": 43735,
+      "passed": [
+        {
+          "rank": 1,
+          "section": "全文",
+          "document_name": "3200 Optimized User Manual V1.2.doc",
+          "dense_similarity": 0.6287,
+          "bm25_score": null,
+          "rrf_score": 0.016393,
+          "rerank_score": 0.9222,
+          "content": "文档：3200 Optimized User Manual V1.2.doc\n自動化系統功能測試機\n\n| 3200 |\n| --- |\n\n使用手冊\n\n自動化系統功能測試機\n\n3200\n\n使用手冊\n\n版本1.4\n\n2019年01月\n\n本使用手冊內容如有變更，恕不另行通知。\n\n本公司並不對本使用手冊之適售性、適合作某種特殊用途之使用或其他任何事項作任何明示、暗示或其他形式之保證或擔保。故本公司將不對手冊內容之錯誤，或因增減、展示或以其他方法使用本手冊所造成之直接、間接、突發性或繼續性之損害負任何責任。\n\n未經本公司同意或依著作權法之規定準許，不得重製、節錄或翻譯本使用手冊之任何內容。\n\n保證期間內，對於下列情形之一者，本公司不負免費修復責任，本公司於修復後依維修情況酌收費用：\n\n非本公司或本公司正式授權代理商直接銷售之產品。\n\n因不可抗拒之災變，或可歸責於使用者未遵照操作手冊規定使用或使用人之過失，如操作不當或其他處置造成故障或損壞。\n\n非經本公司同意，擅自拆卸修理或自行改裝或加裝附屬品，造成故障或損壞。\n\n保證期間內，故障或損壞之維修品，使用者應負責運送到本公司或本公司指定之地點，其送達",
+          "content_full": "文档：3200 Optimized User Manual V1.2.doc\n自動化系統功能測試機\n\n| 3200 |\n| --- |\n\n使用手冊\n\n自動化系統功能測試機\n\n3200\n\n使用手冊\n\n版本1.4\n\n2019年01月\n\n本使用手冊內容如有變更，恕不另行通知。\n\n本公司並不對本使用手冊之適售性、適合作某種特殊用途之使用或其他任何事項作任何明示、暗示或其他形式之保證或擔保。故本公司將不對手冊內容之錯誤，或因增減、展示或以其他方法使用本手冊所造成之直接、間接、突發性或繼續性之損害負任何責任。\n\n未經本公司同意或依著作權法之規定準許，不得重製、節錄或翻譯本使用手冊之任何內容。\n\n保證期間內，對於下列情形之一者，本公司不負免費修復責任，本公司於修復後依維修情況酌收費用：\n\n非本公司或本公司正式授權代理商直接銷售之產品。\n\n因不可抗拒之災變，或可歸責於使用者未遵照操作手冊規定使用或使用人之過失，如操作不當或其他處置造成故障或損壞。\n\n非經本公司同意，擅自拆卸修理或自行改裝或加裝附屬品，造成故障或損壞。\n\n保證期間內，故障或損壞之維修品，使用者應負責運送到本公司或本公司指定之地點，其送達之費用由使用者負擔。修復完畢後運交使用者(限台灣地區)或其指定地點(限台灣地區)之費用由本公司負擔。運送期間之保險由使用者自行向保險公司投保。\n\n電子信箱：info@chromaate.com\n\n網    址：http://www.chromaate.com/\n\n：請對應<表一>\n\n：請對應<表二>\n\n| --- | --- | --- | --- | --- | --- | --- |\n| 部件名稱 | 鉛 | 汞 | 鎘 | 六價鉻 | 多溴聯苯 | 多溴聯苯醚 |\n| 部件名稱 | Pb | Hg | Cd | Cr6+ | PBB | PBDE |\n| PCBA | O | O | O | O | O | O |\n| 機殼 | O | O | O | O | O | O |\n| 標準配件 | O | O | O | O | O | O |\n| 包裝材料 | O | O | O | O | O | O |\n\n處置\n\n| --- | --- | --- | --- | --- | --- | --- |\n| 部件名稱 | 鉛 | 汞 | 鎘 | 六價鉻 | 多溴聯苯 | 多溴聯苯醚 |\n| 部件名稱 | Pb | Hg | Cd | Cr6+ | PBB | PBDE |\n| PCBA |  | O | O | O | O | O |\n| 機殼 |  | O | O | O | O | O |\n| 標準配件 |  | O | O | O | O | O |\n| 包裝材料 | O | O | O | O | O | O |\n\n處置\n\n安全概要\n\n於各階段操作期間與本儀器的維修服務必須注意下列一般性安全預防措施。無法遵守這些預防措施或本手冊中任何明確的警告，將違反設計、製造及儀器使用的安全標準。\n\n如果因顧客無法遵守這些要求，Chroma 將不負任何賠償責任。\n\n|  |  | 接上電源之前 檢查電源符合本電源供應器之額定輸入值。 |\n| --- | --- | --- |\n|  |  | 保護接地 開啟電源前，請確定連接保護接地以預防電擊。 |\n|  |  | 保護接地的必要性 勿切斷內部或外側保護接地線或中斷保護接地端子的連接。如此將引起潛在電擊危險可能對人體帶來傷害。 |\n|  |  | 保險絲 僅可使用所需額定電流、電壓及特定形式的保險絲（正常的熔絲，時間延遲等等……）。勿使用不同規格的保險絲或短路保險絲座。否則可能引起電擊或火災的危險。 |\n|  |  | 勿於易爆的空氣下操作 勿操作儀器於易燃瓦斯或氣體之下。儀器應在通風良好的環境下使用。 |\n|  |  | 勿拆掉儀器的外殼 操作人員不可拆掉儀器的外殼。零件的更換及內部的調整僅可由合格的維修人員來執行。 |\n\n安全符號\n\n|  | 危險：高壓 |\n| --- | --- |\n|  | 說明：為避免傷害，人員死亡或對儀器的損害，操作者必須參考於手冊中的說明。 |\n|  | 高溫：當見此符號，代表此處之溫度高於人體可接受範圍，勿任意接觸以            避免人員傷害。 |\n|  | 保護接地端子：若有失誤的情形下保護以防止電擊。此符號表示儀器操作前端子必須連接至大地。 |\n|  | 警告：標記表示危險，用來提醒使用者注意若未依循正確的操作程式,可能會導致人員的傷害。在完全瞭解及執行須注意的事項前，切勿忽視警告標記並繼續操作。 |\n|  | 注意：標記表示危險。若沒有適時地察覺，可能導致人員的傷害或死亡，此標記喚起您對程式、慣例、條件等的注意。 |\n|  | 提示：注意標示，程式、應用或其他方面的重要資料，請特別詳讀。 |\n\n下面列示本手冊於每次版本修訂時新增、刪減及更新的章節。\n\n| 日期 | 版本 | 修訂紀錄 |\n| --- | --- | --- |\n| 2020年06月 | 1.0 | 完成本手冊。 |\n|  |  |  |\n|  |  |  |\n|  |  |  |\n|  |  |  |\n\n目  錄"
+        }
+      ]
+    },
+    "answer": {
+      "text": "根據《3200 Optimized User Manual V1.2.doc》安全概要章節，操作3200設備時應注意以下安全事項：\n\n⚠️ **安全注意事項**\n\n1. **接上電源之前**：檢查電源符合本電源供應器之額定輸入值。\n2. **保護接地**：開啟電源前，請確定連接保護接地以預防電擊。\n3. **保護接地的必要性**：勿切斷內部或外側保護接地線或中斷保護接地端子的連接，否則將引起潛在電擊危險，可能對人體帶來傷害。\n4. **保險絲**：僅可使用所需額定電流、電壓及特定形式的保險絲（正常的熔絲、時間延遲等）。勿使用不同規格的保險絲或短路保險絲座，否則可能引起電擊或火災的危險。\n5. **勿於易爆的空氣下操作**：勿操作儀器於易燃瓦斯或氣體之下。儀器應在通風良好的環境下使用。\n6. **勿拆掉儀器的外殼**：操作人員不可拆掉儀器的外殼。零件的更換及內部的調整僅可由合格的維修人員來執行。\n\n此外，安全符號標示了高壓、高溫、保護接地端子等危險標記，操作前應詳讀手冊中的說明，避免人員傷害或儀器損壞。\n\n來源：根據《3200 Optimized User Manual V1.2.doc》安全概要及安全符號章節。",
+      "latency_ms": 4889
+    }
+  },
+  {
+    "index": 4,
+    "question": "User Page和Engineer Page的Yield Control良率控制有什么区别？",
+    "retrieval": {
+      "rewritten_queries": [
+        "User Page Yield Control 良率控制設定",
+        "Engineer Page Yield Control 良率控制設定"
+      ],
+      "dense_hits": 10,
+      "bm25_hits": 3,
+      "fused_candidates": 6,
+      "reranked_candidates": 5,
+      "passed_candidates": 2,
+      "all_filtered": false,
+      "latency_ms": 19531,
+      "passed": [
+        {
+          "rank": 1,
+          "section": "4. Engineer Page (系統工程師操作頁面) > 4.4 Yield Control (良率控制設定)",
+          "document_name": "3200 Optimized User Manual V1.2.doc",
+          "dense_similarity": 0.7343,
+          "bm25_score": null,
+          "rrf_score": 0.032787,
+          "rerank_score": 0.9722,
+          "content": "文档：3200 Optimized User Manual V1.2.doc\n4. Engineer Page (系統工程師操作頁面)\n4.4 Yield Control (良率控制設定)\nFail Setting: 開啟Continue Fail功能、 關閉Continue Fail功能。\n\n若啟動此功能，當測試連續Fail達到Fail Count的數量時， 將強制關閉該Site，機台停機並Alarm，按下“Reset” 鈕後會自動清除歸零。\n\nPass Setting: 開啟Continue Pass功能、 關閉Continue Pass功能。\n\n若啟動此功能，須當測試連續Pass達到該Site所設定的數量時，系統才視為該Site 為能生產的測試程序。\n\nYield Setting: 開啟Yield Control功能、 關閉Yield Control功能。\n\n程式會計算最近的“Control Window”顆數的良率，若低於Yield Limitation，機台停機並Alarm，按下“Reset”鈕後會自動清除歸零。\n\n當有指定Check each site yield時，則會依",
+          "content_full": "文档：3200 Optimized User Manual V1.2.doc\n4. Engineer Page (系統工程師操作頁面)\n4.4 Yield Control (良率控制設定)\nFail Setting: 開啟Continue Fail功能、 關閉Continue Fail功能。\n\n若啟動此功能，當測試連續Fail達到Fail Count的數量時， 將強制關閉該Site，機台停機並Alarm，按下“Reset” 鈕後會自動清除歸零。\n\nPass Setting: 開啟Continue Pass功能、 關閉Continue Pass功能。\n\n若啟動此功能，須當測試連續Pass達到該Site所設定的數量時，系統才視為該Site 為能生產的測試程序。\n\nYield Setting: 開啟Yield Control功能、 關閉Yield Control功能。\n\n程式會計算最近的“Control Window”顆數的良率，若低於Yield Limitation，機台停機並Alarm，按下“Reset”鈕後會自動清除歸零。\n\n當有指定Check each site yield時，則會依不同Site所指定的Yield來進行比對，而不是與Yield Limit比對。\n\nControl window Yield\n\n顯示目前測試良率\n\nSave: 點選後，儲存所有良率控制設定值。\n\nCancel: 點選後，離開Yield Control頁面。"
+        },
+        {
+          "rank": 2,
+          "section": "2. User Page (作業員操作頁面) > 2.3 Yield Control (良率控制設定)",
+          "document_name": "3200 Optimized User Manual V1.2.doc",
+          "dense_similarity": 0.7246,
+          "bm25_score": null,
+          "rrf_score": 0.032522,
+          "rerank_score": 0.9114,
+          "content": "文档：3200 Optimized User Manual V1.2.doc\n2. User Page (作業員操作頁面)\n2.3 Yield Control (良率控制設定)\nFail Setting: 開啟Continue Fail功能、 關閉Continue Fail功能。\n\n若啟動此功能，當測試連續Fail達到Fail Count的數量時，機台停機並Alarm，按下“Reset” 鈕後會自動清除歸零。\n\nPass Setting: 開啟Continue Pass功能、 關閉Continue Pass功能。\n\n若啟動此功能，當測試連續Pass達到該Site所設定的數量時，機台停機並Alarm，按下“Reset” 鈕後會自動清除歸零。\n\nYield Setting: 開啟Yield Control功能、 關閉Yield Control功能。\n\n程式會計算最近的“Control Window”顆數的良率，若低於Yield Limitation，機台停機並Alarm，按下“Reset”鈕後會自動清除歸零。\n\n當有指定Check each site yield時，則會依不同Site所指定",
+          "content_full": "文档：3200 Optimized User Manual V1.2.doc\n2. User Page (作業員操作頁面)\n2.3 Yield Control (良率控制設定)\nFail Setting: 開啟Continue Fail功能、 關閉Continue Fail功能。\n\n若啟動此功能，當測試連續Fail達到Fail Count的數量時，機台停機並Alarm，按下“Reset” 鈕後會自動清除歸零。\n\nPass Setting: 開啟Continue Pass功能、 關閉Continue Pass功能。\n\n若啟動此功能，當測試連續Pass達到該Site所設定的數量時，機台停機並Alarm，按下“Reset” 鈕後會自動清除歸零。\n\nYield Setting: 開啟Yield Control功能、 關閉Yield Control功能。\n\n程式會計算最近的“Control Window”顆數的良率，若低於Yield Limitation，機台停機並Alarm，按下“Reset”鈕後會自動清除歸零。\n\n當有指定Check each site yield時，則會依不同Site所指定的Yield來進行比對，而不是與Yield Limit比對。\n\n程式會計算最近的 “Control Window” 顆數的良率，若低於Yield Limitation，機台停機並Alarm，按下“Reset”鈕後會自動清除歸零，每個Site的目前監控良率顯示於Control Window Yield的視窗內。\n\n：IC被測試頭吸取後會直接進入Socket測試，此方式Index Time較短，但較容易損壞Socket與IC。\n\n：IC被測試頭吸取後，在離Socket “Drop High” 的高度時會將IC吸出，讓其自然落入Socket中，並等待 “Drop Timer” 的時間後才進行接觸測試，此方式會增加Index Time的時間，所增加的時間為Drop Timer的設定秒數，但對Socket與IC來說較好。\n\nSave: 點選後，儲存所有良率控制設定值。\n\nCancel: 點選後，離開Yield Control頁面。"
+        }
+      ]
+    },
+    "answer": {
+      "text": "根據知識庫的內容，**User Page** 與 **Engineer Page** 的 **Yield Control（良率控制設定）** 在功能與行為上整體相似，但存在以下關鍵差異：\n\n---\n\n### 1. **Fail Setting（連續 Fail 行為）**\n\n| 項目 | User Page | Engineer Page |\n|------|-----------|---------------|\n| 連續 Fail 達標後行為 | 機台停機並 Alarm | **強制關閉該Site**，機台停機並 Alarm |\n| 清除方式 | 按下「Reset」自動清除歸零 | 按下「Reset」自動清除歸零 |\n\n**差異點**：Engineer Page 在連續 Fail 達標時，除了停機 Alarm 外，還會**強制關閉該 Site**，而 User Page 僅停機 Alarm，**未提及關閉 Site**。\n\n---\n\n### 2. **Pass Setting（連續 Pass 行為）**\n\n| 項目 | User Page | Engineer Page |\n|------|-----------|---------------|\n| 連續 Pass 達標後行為 | 機台停機並 Alarm，按下「Reset」歸零 | **系統視為該Site為能生產的測試程序**，按下「Reset」後自動清除歸零 |\n\n**差異點**：  \n- User Page：連續 Pass 達標時，系統**停機並 Alarm**（視為異常結束？）。  \n- Engineer Page：連續 Pass 達標時，系統**不視為異常**，而是**確認該Site可生產**，之後按下「Reset」歸零。  \n⚠️ **此處行為邏輯相反**，User Page 將 Pass 達標視為需停機事件，Engineer Page 則視為正常狀態確認。\n\n---\n\n### 3. **Yield Setting（良率控制行為）**\n\n兩者規則**一致**：\n- 計算最近「Control Window」顆數的良率。\n- 若低於 Yield Limitation，機台停機並 Alarm。\n- 指定「Check each site yield」時，各 Site 比對各自指定的 Yield 值，而非統一 Yield Limit。\n- 按下「Reset」歸零。\n\n**無差異**。\n\n---\n\n### 4. **其他差異**\n\n- **Engineer Page** 未包含 User Page 末尾關於「IC 測試頭吸取後進入 Socket」與「Drop High / Drop Timer」的兩段說明。  \n  這兩個段落（關於 Index Time 較短但易損壞 Socket 與 IC）**僅出現在 User Page 文件末尾**，並非 Yield Control 功能本身，而是補充說明。\n\n---\n\n### 總結\n\n| 對比項目 | User Page | Engineer Page |\n|----------|-----------|---------------|\n| Fail Setting 達標行為 | 停機 Alarm | 強制關閉該 Site + 停機 Alarm |\n| Pass Setting 達標行為 | 停機 Alarm | 視為 Site 可生產（不停機）|\n| Yield Setting | 相同 | 相同 |\n\n根據《3200 Optimized User Manual V1.2.doc》2.3 與 4.4 章節內容：\n\n> **關鍵差異**：  \n> 1. **Fail 時**：Engineer Page 多了一道「關閉該 Site」的強制動作。  \n> 2. **Pass 時**：Engineer Page 將連續 Pass 達標視為「確認 Site 可生產」，User Page 則視為「停機事件」。\n\n如您需要進一步的操作建議，可確認您是使用 **作業員權限（User Page）** 還是 **工程師權限（Engineer Page）**，以採用對應的設定邏輯。",
+      "latency_ms": 15921
+    }
+  },
+  {
+    "index": 5,
+    "question": "Timer Setting怎么设置，有哪些参数？",
+    "retrieval": {
+      "rewritten_queries": [
+        "Timer Setting 设置方法",
+        "Timer Setting 参数",
+        "Timer Setting setup procedure parameters"
+      ],
+      "dense_hits": 15,
+      "bm25_hits": 0,
+      "fused_candidates": 7,
+      "reranked_candidates": 5,
+      "passed_candidates": 1,
+      "all_filtered": false,
+      "latency_ms": 11875,
+      "passed": [
+        {
+          "rank": 1,
+          "section": "4. Engineer Page (系統工程師操作頁面) > 4.3 Timer Setting (時間設定)",
+          "document_name": "3200 Optimized User Manual V1.2.doc",
+          "dense_similarity": 0.6791,
+          "bm25_score": null,
+          "rrf_score": 0.016393,
+          "rerank_score": 0.7961,
+          "content": "文档：3200 Optimized User Manual V1.2.doc\n4. Engineer Page (系統工程師操作頁面)\n4.3 Timer Setting (時間設定)\n此設定畫面提供使用者設定部分動作所需花費的時間，其欄位說明如下:\n\n| 欄位名稱 | 內容說明 |\n| --- | --- |\n| Vacuum Timeout | 程式在吸IC的過程中，只要Vacuum Sensor ON，就會進入到下一個動作，若已超過Vacuum所設定的時間且Vacuum Sensor沒有ON，機台將停止並Alarm。所以Vacuum的值建議放4 Sec。 |\n| Vacuum Delay | 手臂移動到位後，需停留的時間，程式會等待所設定的時間後，才開 Vacuum。 |\n| Vacuum Stable | Vacuum Sensor ON 後，等待穩定時間，程式會等待所設定的時間後，才會執行下一個動作。 |\n| Blow Delay | 手臂移動到位後，需停留的時間，程式會等待所設定的時間後，才會關 Vacuum & 開 Blow。 |\n| Blow Time | 吹氣時間，程",
+          "content_full": "文档：3200 Optimized User Manual V1.2.doc\n4. Engineer Page (系統工程師操作頁面)\n4.3 Timer Setting (時間設定)\n此設定畫面提供使用者設定部分動作所需花費的時間，其欄位說明如下:\n\n| 欄位名稱 | 內容說明 |\n| --- | --- |\n| Vacuum Timeout | 程式在吸IC的過程中，只要Vacuum Sensor ON，就會進入到下一個動作，若已超過Vacuum所設定的時間且Vacuum Sensor沒有ON，機台將停止並Alarm。所以Vacuum的值建議放4 Sec。 |\n| Vacuum Delay | 手臂移動到位後，需停留的時間，程式會等待所設定的時間後，才開 Vacuum。 |\n| Vacuum Stable | Vacuum Sensor ON 後，等待穩定時間，程式會等待所設定的時間後，才會執行下一個動作。 |\n| Blow Delay | 手臂移動到位後，需停留的時間，程式會等待所設定的時間後，才會關 Vacuum & 開 Blow。 |\n| Blow Time | 吹氣時間，程式會等待所設定的時間後，才進行下一個動作，所以Blow的值建議不要太大。 |\n| Blow Stable | Blow Time 後，等待穩定時間，程式會等待所設定的時間後，才會執行下一個動作。 |\n| Down Time | Input Arm Z 軸下降時間。 |\n| Up Time | Input Arm Z 軸上升時間。 |\n\nDefault: 點選後，將所有時間設定值恢復為預設值。\n\nSave: 點選後，儲存所有時間設定值。\n\nClose: 點選後，離開Timer Setting頁面。"
+        }
+      ]
+    },
+    "answer": {
+      "text": "根據《3200 Optimized User Manual V1.2.doc》4. Engineer Page (系統工程師操作頁面) > 4.3 Timer Setting (時間設定) 章節，Timer Setting 的設定方式與參數說明如下：\n\n### 參數一覽表\n\n| 欄位名稱 | 內容說明 | 建議值 / 備註 |\n| --- | --- | --- |\n| Vacuum Timeout | 吸IC過程中，若Vacuum Sensor ON即進入下一動作；若超過設定時間且Sensor未ON，機台停止並Alarm。 | 建議設為 **4 Sec** |\n| Vacuum Delay | 手臂移動到位後，需停留的時間；程式會等待設定時間後才開啟 Vacuum。 | 依需求設定 |\n| Vacuum Stable | Vacuum Sensor ON後，等待穩定時間；程式會等待設定時間後才執行下一動作。 | 依需求設定 |\n| Blow Delay | 手臂移動到位後，需停留的時間；程式會等待設定時間後才關閉 Vacuum 並開啟 Blow。 | 依需求設定 |\n| Blow Time | 吹氣時間；程式會等待設定時間後才進行下一動作。 | 建議值**不要太大** |\n| Blow Stable | Blow Time 結束後，等待穩定時間；程式會等待設定時間後才執行下一動作。 | 依需求設定 |\n| Down Time | Input Arm Z 軸下降時間。 | 依需求設定 |\n| Up Time | Input Arm Z 軸上升時間。 | 依需求設定 |\n\n### 設定操作說明\n\n- **更改數值**：直接在各欄位中輸入所需的時間（單位應為秒，依系統實際設定）。\n- **恢復預設值**：點選 **Default** 按鈕，所有時間設定值將恢復為系統預設值。\n- **儲存設定**：點選 **Save** 按鈕，儲存當前修改的時間設定值。\n- **離開頁面**：點選 **Close** 按鈕，關閉 Timer Setting 設定畫面。\n\n### 注意事項\n- Vacuum Timeout 若設定過短可能導致機台頻繁 Alarm；建議保留 4 秒。\n- Blow Time 建議不要設太大，以免影響整體週期時間。\n- 所有時間參數建議根據實際生產節拍與料件特性進行微調，修改後務必點選 **Save** 儲存。",
+      "latency_ms": 5765
+    }
+  },
+  {
+    "index": 6,
+    "question": "IO Monitor和Motor Monitor分别有什么功能？",
+    "retrieval": {
+      "rewritten_queries": [
+        "IO Monitor 功能 IO監視器",
+        "Motor Monitor 功能 馬達監視"
+      ],
+      "dense_hits": 10,
+      "bm25_hits": 1,
+      "fused_candidates": 7,
+      "reranked_candidates": 5,
+      "passed_candidates": 3,
+      "all_filtered": false,
+      "latency_ms": 7891,
+      "passed": [
+        {
+          "rank": 1,
+          "section": "3. Setup Page (設定工程師操作頁面) > 3.3 IO Monitor (IO 監視器)",
+          "document_name": "3200 Optimized User Manual V1.2.doc",
+          "dense_similarity": 0.6732,
+          "bm25_score": null,
+          "rrf_score": 0.032787,
+          "rerank_score": 0.122,
+          "content": "文档：3200 Optimized User Manual V1.2.doc\n3. Setup Page (設定工程師操作頁面)\n3.3 IO Monitor (IO 監視器)\n此功能可用以監看各IO點目前的狀態，燈號圖示紅色為Input，綠色為Output，Output可以手動點選開關，暗色表示此狀態 Off，亮色表示此狀態 On，離開此畫面後，IO會回復為原來的狀態。\n\nClose\n\n點選後，離開頁面。",
+          "content_full": "文档：3200 Optimized User Manual V1.2.doc\n3. Setup Page (設定工程師操作頁面)\n3.3 IO Monitor (IO 監視器)\n此功能可用以監看各IO點目前的狀態，燈號圖示紅色為Input，綠色為Output，Output可以手動點選開關，暗色表示此狀態 Off，亮色表示此狀態 On，離開此畫面後，IO會回復為原來的狀態。\n\nClose\n\n點選後，離開頁面。"
+        },
+        {
+          "rank": 2,
+          "section": "4. Engineer Page (系統工程師操作頁面) > 4.1 Motor Monitor(馬達監視 )",
+          "document_name": "3200 Optimized User Manual V1.2.doc",
+          "dense_similarity": 0.6546,
+          "bm25_score": null,
+          "rrf_score": 0.016393,
+          "rerank_score": 0.0299,
+          "content": "文档：3200 Optimized User Manual V1.2.doc\n4. Engineer Page (系統工程師操作頁面)\n4.1 Motor Monitor(馬達監視 )\n各狀態燈號說明如下表:\n\n| 名稱 | 說明 | 備註 |\n| --- | --- | --- |\n| Alarm | 馬達故障，請按Reset清除並Initial機台。 |  |\n| Drive | 命令訊號，ON表示馬達正被驅動中。 |  |\n| EMG | 急停訊號。 |  |\n| Error | 正、負極限是否動作的訊號。 |  |\n| InPos | 馬達是否到位訊號。 |  |\n| LMT- | 負極限，ON表示位置已達負極限。 |  |\n| LMT+ | 正極限，ON表示位置已達正極限。 |  |\n| TLC | Torque Limit Control，ON表示Torque達到限制值。 |  |\n|  |  |  |\n|  |  |  |\n|  |  |  |\n\nClose: 點選後，離開Motor Monitor頁面。",
+          "content_full": "文档：3200 Optimized User Manual V1.2.doc\n4. Engineer Page (系統工程師操作頁面)\n4.1 Motor Monitor(馬達監視 )\n各狀態燈號說明如下表:\n\n| 名稱 | 說明 | 備註 |\n| --- | --- | --- |\n| Alarm | 馬達故障，請按Reset清除並Initial機台。 |  |\n| Drive | 命令訊號，ON表示馬達正被驅動中。 |  |\n| EMG | 急停訊號。 |  |\n| Error | 正、負極限是否動作的訊號。 |  |\n| InPos | 馬達是否到位訊號。 |  |\n| LMT- | 負極限，ON表示位置已達負極限。 |  |\n| LMT+ | 正極限，ON表示位置已達正極限。 |  |\n| TLC | Torque Limit Control，ON表示Torque達到限制值。 |  |\n|  |  |  |\n|  |  |  |\n|  |  |  |\n\nClose: 點選後，離開Motor Monitor頁面。"
+        },
+        {
+          "rank": 3,
+          "section": "3. Setup Page (設定工程師操作頁面) > 3.4 Motor Monitor (馬達監視 )",
+          "document_name": "3200 Optimized User Manual V1.2.doc",
+          "dense_similarity": 0.6403,
+          "bm25_score": null,
+          "rrf_score": 0.016129,
+          "rerank_score": 0.0142,
+          "content": "文档：3200 Optimized User Manual V1.2.doc\n3. Setup Page (設定工程師操作頁面)\n3.4 Motor Monitor (馬達監視 )\n各狀態燈號說明如下表:\n\n| 名稱 | 說明 | 備註 |\n| --- | --- | --- |\n| Alarm | 馬達故障，請按Reset清除並Initial機台。 |  |\n| Drive | 命令訊號，ON表示馬達正被驅動中。 |  |\n| EMG | 急停訊號。 |  |\n| Error | 正、負極限是否動作的訊號。 |  |\n| InPos | 馬達是否到位訊號。 |  |\n| LMT- | 負極限，ON表示位置已達負極限。 |  |\n| LMT+ | 正極限，ON表示位置已達正極限。 |  |\n| Z-Phase | 馬達原點是否到位訊號 |  |\n| LMT+ | 正極限，ON表示位置已達正極限。 |  |\n| Z-Phase | 馬達原點是否到位訊號 |  |\n| TLC | Torque Limit Control，ON表示Torque達到限制值。 |  |\n\nClose: 點選後，",
+          "content_full": "文档：3200 Optimized User Manual V1.2.doc\n3. Setup Page (設定工程師操作頁面)\n3.4 Motor Monitor (馬達監視 )\n各狀態燈號說明如下表:\n\n| 名稱 | 說明 | 備註 |\n| --- | --- | --- |\n| Alarm | 馬達故障，請按Reset清除並Initial機台。 |  |\n| Drive | 命令訊號，ON表示馬達正被驅動中。 |  |\n| EMG | 急停訊號。 |  |\n| Error | 正、負極限是否動作的訊號。 |  |\n| InPos | 馬達是否到位訊號。 |  |\n| LMT- | 負極限，ON表示位置已達負極限。 |  |\n| LMT+ | 正極限，ON表示位置已達正極限。 |  |\n| Z-Phase | 馬達原點是否到位訊號 |  |\n| LMT+ | 正極限，ON表示位置已達正極限。 |  |\n| Z-Phase | 馬達原點是否到位訊號 |  |\n| TLC | Torque Limit Control，ON表示Torque達到限制值。 |  |\n\nClose: 點選後，離開Site Setting頁面。"
+        }
+      ]
+    },
+    "answer": {
+      "text": "根據查詢結果，以下分別說明 **IO Monitor** 與 **Motor Monitor** 的功能：\n\n---\n\n### 1. IO Monitor（IO 監視器）\n**功能說明**：  \n此功能用以監看各 IO 點目前的狀態。燈號圖示中，**紅色為 Input**，**綠色為 Output**。Output 可以手動點選開關，**暗色表示狀態 Off**，**亮色表示狀態 On**。  \n⚠️ 注意：離開此畫面後，IO 會回復為原來的狀態。\n\n**根據《3200 Optimized User Manual V1.2.doc》3. Setup Page > 3.3 IO Monitor 章節**\n\n---\n\n### 2. Motor Monitor（馬達監視）\n**功能說明**：  \n此功能用以監看馬達各狀態訊號，燈號說明如下表（來源涵蓋 Setup Page 3.4 及 Engineer Page 4.1 的內容，兩處大致相同，合併呈現）：\n\n| 名稱 | 說明 | 備註 |\n| --- | --- | --- |\n| Alarm | 馬達故障，請按 Reset 清除並 Initial 機台。 | |\n| Drive | 命令訊號，ON 表示馬達正被驅動中。 | |\n| EMG | 急停訊號。 | |\n| Error | 正、負極限是否動作的訊號。 | |\n| InPos | 馬達是否到位訊號。 | |\n| LMT- | 負極限，ON 表示位置已達負極限。 | |\n| LMT+ | 正極限，ON 表示位置已達正極限。 | |\n| Z-Phase | 馬達原點是否到位訊號（僅 Setup Page 3.4 有列出） | |\n| TLC | Torque Limit Control，ON 表示 Torque 達到限制值。 | |\n\n**根據《3200 Optimized User Manual V1.2.doc》3. Setup Page > 3.4 Motor Monitor 章節 及 4. Engineer Page > 4.1 Motor Monitor 章節**\n\n---\n\n### 總結差異\n- **IO Monitor**：監看與操作 **I/O 點（輸入/輸出）** 狀態，且可手動切換輸出。  \n- **Motor Monitor**：監看 **馬達驅動狀態**（如極限、到位、故障、急停、扭力限制等），不提供直接操作，僅供監視。",
+      "latency_ms": 6311
+    }
+  },
+  {
+    "index": 7,
+    "question": "Tray File料盘资料和Tray Map有什么不同？",
+    "retrieval": {
+      "rewritten_queries": [
+        "Tray File 料盘资料",
+        "Tray Map 料盘映射"
+      ],
+      "dense_hits": 10,
+      "bm25_hits": 1,
+      "fused_candidates": 7,
+      "reranked_candidates": 5,
+      "passed_candidates": 1,
+      "all_filtered": false,
+      "latency_ms": 17734,
+      "passed": [
+        {
+          "rank": 1,
+          "section": "4. Engineer Page (系統工程師操作頁面) > 4.5 Tray File (料盤資料)",
+          "document_name": "3200 Optimized User Manual V1.2.doc",
+          "dense_similarity": 0.6747,
+          "bm25_score": null,
+          "rrf_score": 0.032787,
+          "rerank_score": 0.5526,
+          "content": "文档：3200 Optimized User Manual V1.2.doc\n4. Engineer Page (系統工程師操作頁面)\n4.5 Tray File (料盤資料)\n此功能可用來管理料盤資料(新增/刪除/修改)，並可設定料盤之尺寸規格。\n\nBase File: 顯示 Set Base 設定的母檔。\n\nNew\n\n開啟一個新檔設定。\n\nModify: 修改所選擇檔案的設定。\n\nDelete: 刪除所選擇檔案的設定。\n\nCol\n\n縱列個數\n\nRow\n\n横列個數\n\nA: 料盤左邊緣到第一個Device放置處中心的距離\n\nB: 料盤上緣到第一個Device放置處中心的距離\n\nC: 左右兩個相鄰Device放置處中心的距離\n\nD: 上下兩個相鄰Device放置處中心的距離\n\nH\n\nIC 長度\n\nW\n\nIC 寬度\n\nHigh\n\nLiDar以零點為基準點，High 訊號偵測距離設定\n\nLow\n\nLiDar以零點為基準點，Low 訊號偵測距離設定\n\nTray Type: 選擇生產時所使用的Tray 類型，分別有NON-JEDEC、Thin 與Thick\n\nLidar detect\n\nLiDa",
+          "content_full": "文档：3200 Optimized User Manual V1.2.doc\n4. Engineer Page (系統工程師操作頁面)\n4.5 Tray File (料盤資料)\n此功能可用來管理料盤資料(新增/刪除/修改)，並可設定料盤之尺寸規格。\n\nBase File: 顯示 Set Base 設定的母檔。\n\nNew\n\n開啟一個新檔設定。\n\nModify: 修改所選擇檔案的設定。\n\nDelete: 刪除所選擇檔案的設定。\n\nCol\n\n縱列個數\n\nRow\n\n横列個數\n\nA: 料盤左邊緣到第一個Device放置處中心的距離\n\nB: 料盤上緣到第一個Device放置處中心的距離\n\nC: 左右兩個相鄰Device放置處中心的距離\n\nD: 上下兩個相鄰Device放置處中心的距離\n\nH\n\nIC 長度\n\nW\n\nIC 寬度\n\nHigh\n\nLiDar以零點為基準點，High 訊號偵測距離設定\n\nLow\n\nLiDar以零點為基準點，Low 訊號偵測距離設定\n\nTray Type: 選擇生產時所使用的Tray 類型，分別有NON-JEDEC、Thin 與Thick\n\nLidar detect\n\nLiDar 檢測位置\n\nSLT Program: 此次生產時，所使用的SLT Program 選擇\n\nSave: 點選後，儲存目前的設定值。\n\nCancel: 點選後，關閉 Tray Setting 的設定。\n\nClose: 點選後，離開 Tray File 頁面。"
+        }
+      ]
+    },
+    "answer": {
+      "text": "根據檢索結果，知識庫中僅提供 **Tray File（料盤資料）** 的詳細說明，但**未包含任何關於「Tray Map」的定義或功能描述**，因此無法進行兩者之間的比較。\n\n知識庫中未找到「Tray Map」相關資訊。請確認：\n1. 問題涉及的内容已在知識庫中（例如是否為其他文件或章節）。\n2. 嘗試使用文件中的術語（如「Tray File」、「Tray Type」等）重新提問。\n\n若您需要 Tray File 的完整功能說明，可參考以下重點：\n\n- **Tray File 功能**：用於管理料盤資料（新增/刪除/修改），並可設定料盤尺寸規格。  \n- **主要參數**：包括行列個數（Col/Row）、邊距（A/B）、相鄰間距（C/D）、IC 長寬（H/W）、LiDar 高低訊號偵測距離（High/Low）、Tray 類型（NON-JEDEC/Thin/Thick）等。  \n- **匯出/儲存**：透過 Save 按鈕儲存設定，並可選擇 Base File 及 SLT Program。\n\n根據《3200 Optimized User Manual V1.2.doc》4. Engineer Page > 4.5 Tray File 章節。",
+      "latency_ms": 4735
+    }
+  },
+  {
+    "index": 8,
+    "question": "Cobra温度控制怎么设定？",
+    "retrieval": {
+      "rewritten_queries": [
+        "Cobra Temperature Control Setting",
+        "Cobra 溫度控制設定",
+        "Set SV 設定溫度值"
+      ],
+      "dense_hits": 15,
+      "bm25_hits": 2,
+      "fused_candidates": 8,
+      "reranked_candidates": 5,
+      "passed_candidates": 1,
+      "all_filtered": false,
+      "latency_ms": 60280,
+      "passed": [
+        {
+          "rank": 1,
+          "section": "3. Setup Page (設定工程師操作頁面) > 3.11 Cobra (溫度控制設定)",
+          "document_name": "3200 Optimized User Manual V1.2.doc",
+          "dense_similarity": 0.7665,
+          "bm25_score": null,
+          "rrf_score": 0.032787,
+          "rerank_score": 0.9889,
+          "content": "文档：3200 Optimized User Manual V1.2.doc\n3. Setup Page (設定工程師操作頁面)\n3.11 Cobra (溫度控制設定)\n(1) Set SV\n\n設定溫控器溫度值\n\n(2): 溫控器目前溫度設定值\n\n(3) TC1: 溫控器目前量測溫度值\n\n(4) Evap\n\n溫控器蒸發器溫度值\n\nClose\n\n離開此頁面",
+          "content_full": "文档：3200 Optimized User Manual V1.2.doc\n3. Setup Page (設定工程師操作頁面)\n3.11 Cobra (溫度控制設定)\n(1) Set SV\n\n設定溫控器溫度值\n\n(2): 溫控器目前溫度設定值\n\n(3) TC1: 溫控器目前量測溫度值\n\n(4) Evap\n\n溫控器蒸發器溫度值\n\nClose\n\n離開此頁面"
+        }
+      ]
+    },
+    "answer": {
+      "text": "[LLM 调用失败: ]",
+      "latency_ms": 4234
+    }
+  },
+  {
+    "index": 9,
+    "question": "Event Log事件记录在哪几个页面可以看到，有什么不同？",
+    "retrieval": {
+      "rewritten_queries": [
+        "Event Log事件记录在哪几个页面可以看到，有什么不同？"
+      ],
+      "dense_hits": 5,
+      "bm25_hits": 0,
+      "fused_candidates": 5,
+      "reranked_candidates": 5,
+      "passed_candidates": 3,
+      "all_filtered": false,
+      "latency_ms": 25796,
+      "passed": [
+        {
+          "rank": 1,
+          "section": "4. Engineer Page (系統工程師操作頁面) > 4.11 Event Log (事件記錄)",
+          "document_name": "3200 Optimized User Manual V1.2.doc",
+          "dense_similarity": 0.6714,
+          "bm25_score": null,
+          "rrf_score": 0.016393,
+          "rerank_score": 0.7066,
+          "content": "文档：3200 Optimized User Manual V1.2.doc\n4. Engineer Page (系統工程師操作頁面)\n4.11 Event Log (事件記錄)\n記錄系統執行後所發生的事件，以便提供一些初步的問題參考資訊。事件層級共分四級，分別為一般訊息(),警告(),錯誤(),嚴重錯誤()等。另外可利用Export功能將目前所有的事件記錄匯出成文字檔(.txt)，可供其它方面使用。各欄位所代表的意義如下表:\n\n| 欄位名稱 | 內容說明 |\n| --- | --- |\n| Time | 事件發生時間 |\n| Code | 事件代碼 |\n| Message | 事件訊息，表示事件發生的原因。 |\n\n(1) 時間區間選取功能: 可只顯示選取時間區間內的事件，使用方式為選取好時間的上下限，再點選”Query”按鈕\n\n(2) Export: 可將目前事件列表輸出為報表。(.csv檔)\n\n(3) Even Log Selection For Display: 設定顯示異常的等級。(Operating record: 操作記錄 Staff: 人員產生異常 Produce: 生產",
+          "content_full": "文档：3200 Optimized User Manual V1.2.doc\n4. Engineer Page (系統工程師操作頁面)\n4.11 Event Log (事件記錄)\n記錄系統執行後所發生的事件，以便提供一些初步的問題參考資訊。事件層級共分四級，分別為一般訊息(),警告(),錯誤(),嚴重錯誤()等。另外可利用Export功能將目前所有的事件記錄匯出成文字檔(.txt)，可供其它方面使用。各欄位所代表的意義如下表:\n\n| 欄位名稱 | 內容說明 |\n| --- | --- |\n| Time | 事件發生時間 |\n| Code | 事件代碼 |\n| Message | 事件訊息，表示事件發生的原因。 |\n\n(1) 時間區間選取功能: 可只顯示選取時間區間內的事件，使用方式為選取好時間的上下限，再點選”Query”按鈕\n\n(2) Export: 可將目前事件列表輸出為報表。(.csv檔)\n\n(3) Even Log Selection For Display: 設定顯示異常的等級。(Operating record: 操作記錄 Staff: 人員產生異常 Produce: 生產異常紀錄 Machinery: 設備故障紀錄)\n\n(4) Default Event: 顯示最新的事件列表(不預設時間區間)。\n\nClose: 點選後，離開Event Log頁面。"
+        },
+        {
+          "rank": 2,
+          "section": "3. Setup Page (設定工程師操作頁面) > 3.7 Event Log (事件記錄)",
+          "document_name": "3200 Optimized User Manual V1.2.doc",
+          "dense_similarity": 0.6569,
+          "bm25_score": null,
+          "rrf_score": 0.016129,
+          "rerank_score": 0.6755,
+          "content": "文档：3200 Optimized User Manual V1.2.doc\n3. Setup Page (設定工程師操作頁面)\n3.7 Event Log (事件記錄)\n記錄系統執行後所發生的事件，以便提供一些初步的問題參考資訊。事件層級共分四級，分別為一般訊息(),警告(),錯誤(),嚴重錯誤()等。另外可利用Export功能將目前所有的事件記錄匯出成文字檔(.txt)，可供其它方面使用。各欄位所代表的意義如下表:\n\n| 欄位名稱 | 內容說明 |\n| --- | --- |\n| Time | 事件發生時間 |\n| Code | 事件代碼 |\n| Message | 事件訊息，表示事件發生的原因。 |\n\n(1) 時間區間選取功能: 可只顯示選取時間區間內的事件，使用方式為選取好時間的上下限，再點選”Query”按鈕\n\n(2) Export: 可將目前事件列表輸出為報表。(.csv檔)\n\n(3) Even Log Selection For Display: 設定顯示異常的等級。(Operating record: 操作記錄 Staff: 人員產生異常 Produce: 生產異常紀錄",
+          "content_full": "文档：3200 Optimized User Manual V1.2.doc\n3. Setup Page (設定工程師操作頁面)\n3.7 Event Log (事件記錄)\n記錄系統執行後所發生的事件，以便提供一些初步的問題參考資訊。事件層級共分四級，分別為一般訊息(),警告(),錯誤(),嚴重錯誤()等。另外可利用Export功能將目前所有的事件記錄匯出成文字檔(.txt)，可供其它方面使用。各欄位所代表的意義如下表:\n\n| 欄位名稱 | 內容說明 |\n| --- | --- |\n| Time | 事件發生時間 |\n| Code | 事件代碼 |\n| Message | 事件訊息，表示事件發生的原因。 |\n\n(1) 時間區間選取功能: 可只顯示選取時間區間內的事件，使用方式為選取好時間的上下限，再點選”Query”按鈕\n\n(2) Export: 可將目前事件列表輸出為報表。(.csv檔)\n\n(3) Even Log Selection For Display: 設定顯示異常的等級。(Operating record: 操作記錄 Staff: 人員產生異常 Produce: 生產異常紀錄 Machinery: 設備故障紀錄)\n\n(4) Default Event: 顯示最新的事件列表(不預設時間區間)。\n\nClose: 點選後，離開Event Log頁面。"
+        },
+        {
+          "rank": 3,
+          "section": "1. Run Page (生產執行操作頁面)",
+          "document_name": "3200 Optimized User Manual V1.2.doc",
+          "dense_similarity": 0.541,
+          "bm25_score": null,
+          "rrf_score": 0.015873,
+          "rerank_score": 0.1287,
+          "content": "文档：3200 Optimized User Manual V1.2.doc\n1. Run Page (生產執行操作頁面)\n生產執行畫面:\n\n使用者模式，按下後會跳出使用者選擇視窗，以便切換使用者\n使用者共區分User()、Setup()、Engineer()三種模式。\n\nTest Site狀態顯示；Site開啟狀態顯示及Test Site目前測試的Bin Code；IC的測試結果，綠色為Pass，紅色及黃色為Fail。\n\n目前執行的模式，分別有On Line/Normal、Off Line/Normal、Off Line/No Device、Off Line/ No Device No Tray。\n\n目前執行狀態，分別有UnInitial、Ready、Cycle、Cycle Stop、One Cycle、One Cycle Stop。\n\nMatrixCode Information，顯示目前 Camera 辨識的 Barcode 資訊。\n\nIndex Time，顯示目前Site的Index Time。\n\n顯示每個Lot的Cycle Time。\n\nUPH顯示目前機台每小時產出。\n\nTo",
+          "content_full": "文档：3200 Optimized User Manual V1.2.doc\n1. Run Page (生產執行操作頁面)\n生產執行畫面:\n\n使用者模式，按下後會跳出使用者選擇視窗，以便切換使用者\n使用者共區分User()、Setup()、Engineer()三種模式。\n\nTest Site狀態顯示；Site開啟狀態顯示及Test Site目前測試的Bin Code；IC的測試結果，綠色為Pass，紅色及黃色為Fail。\n\n目前執行的模式，分別有On Line/Normal、Off Line/Normal、Off Line/No Device、Off Line/ No Device No Tray。\n\n目前執行狀態，分別有UnInitial、Ready、Cycle、Cycle Stop、One Cycle、One Cycle Stop。\n\nMatrixCode Information，顯示目前 Camera 辨識的 Barcode 資訊。\n\nIndex Time，顯示目前Site的Index Time。\n\n顯示每個Lot的Cycle Time。\n\nUPH顯示目前機台每小時產出。\n\nTotal顯示目前總產出數量。\n\nDevice Setting Lot 設定，顯示目前設定的 Tray file。\n\nYield相關設定顯示。\n\n關機按鈕，此按鈕只能關閉程式，電腦與機台關機，請用手動。\n\nIO monitor，觀看所有IO的狀態。\n\nEvent Log，記錄系統執行後所發生的事件，以便提供一些初步的問題參考資訊。\n\nMotor monitor，觀看所有馬達的狀態。\n\nOutput Tray Map，觀看所有Output Tray 上的IC測試結果、Bin Code、Data Matrix Code。\n\nCategory Setup，觀看或設定目前的Category分類。\n\nManual Test，進行手動驗證使用。\n\nYield Control,此頁面可以設定相關Yield設定值。\n\nBin Log ,可以察看每個Site測試結果。\n\nHardware Bin。\n\n該Tray 指定的 Tray file。\n\nCategory設定狀態。\n\n置入該Tray的Device數量及良率(數量/良率)。\n\nLot Information設定/檢視鈕，按下後可開啟Lot Information視窗。\n\n結批，點開後可以選擇哪一個 Lot，列印報表並清除數量。"
+        }
+      ]
+    },
+    "answer": {
+      "text": "[LLM 调用失败: Connection error.]",
+      "latency_ms": 7438
+    }
+  }
+]
