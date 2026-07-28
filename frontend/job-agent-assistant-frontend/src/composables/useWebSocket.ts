@@ -26,9 +26,12 @@ const connected = ref(false)
 const error = ref<string | null>(null)
 const sessionId = ref<string | null>(null)
 
+let connecting = false  // 防止并发连接
+
 async function connect() {
   const jwt = localStorage.getItem('token')
-  if (!jwt || ws) return
+  if (!jwt || ws || connecting) return
+  connecting = true
 
   // 优先复用 sessionStorage 中保存的会话 ID（断线重连不换会话），
   // 无则生成新 UUID（首次连接或主动新建会话后）
@@ -43,9 +46,8 @@ async function connect() {
     // ② 用票据 + session_id 建立 WebSocket 连接（URL 里只暴露短期一次性票据）
     ws = new WebSocket(`${WS_BASE}/ws/chat?ticket=${ticket}&session_id=${sessionId.value}`)
   } catch (err: any) {
+    connecting = false
     error.value = '获取连接票据失败'
-    // 如果是 401（Token 过期），交给 client.ts 拦截器跳登录；
-    // 其他错误（网络不通等）延迟重试
     if (err?.response?.status !== 401) {
       setTimeout(() => connect(), 5000)
     }
@@ -83,6 +85,8 @@ async function connect() {
       setTimeout(() => { connect().catch(() => { }) }, 5000)
     }
   }
+
+  connecting = false
 }
 
 function send(type: string, payload: any = null): boolean {
