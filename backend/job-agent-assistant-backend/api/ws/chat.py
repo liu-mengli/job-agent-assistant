@@ -220,7 +220,7 @@ async def websocket_chat(
                     logger.warning(f"未知消息类型: {msg_type}")
                     await manager.send_system(MessageType.ERROR, user_id, session_id, payload={"detail": f"未知消息类型: {msg_type}"})
 
-        except WebSocketDisconnect:
+        except (WebSocketDisconnect, RuntimeError):
             pass
         finally:
             agent_lock.release(user_id, session_id)  # 断连时清理锁，防止泄漏
