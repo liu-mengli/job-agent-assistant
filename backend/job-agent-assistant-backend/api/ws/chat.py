@@ -78,6 +78,9 @@ async def websocket_chat(
 ):
     ws_id = uuid4().hex[:8]
 
+    # 必须先 accept，否则连接断开时 receive_text 会抛 RuntimeError
+    await ws.accept()
+
     # 校验 session_id 格式
     if not UUID_RE.match(session_id):
         logger.bind(request_id=ws_id).warning(f"WS 握手失败：session_id 格式无效 {session_id}")

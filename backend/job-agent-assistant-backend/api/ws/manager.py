@@ -17,7 +17,6 @@ class ConnectionManager:
             except Exception:
                 pass
 
-        await ws.accept()
         self._connections[key] = ws
 
     def disconnect(self, user_id: int, session_id: str, ws: WebSocket):
