@@ -119,6 +119,7 @@ function newSession() {
 }
 
 function disconnect() {
+  ++connectVersion  // 废弃所有进行中的连接
   connecting = false
   if (reconnectTimer) clearTimeout(reconnectTimer)
   if (pingTimer) clearInterval(pingTimer)
