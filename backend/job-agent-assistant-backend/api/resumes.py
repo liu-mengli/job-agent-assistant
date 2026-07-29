@@ -251,3 +251,16 @@ async def download_resume(
         filename=doc.filename,
         media_type="application/pdf",
     )
+
+
+@router.get("/resume/pdf")
+async def download_static_resume():
+    """下载固定简历 PDF（路径和文件名由 RESUME_DIR / RESUME_PDF_NAME 配置）"""
+    file_path = os.path.join(settings.RESUME_DIR, settings.RESUME_PDF_NAME)
+    if not os.path.exists(file_path):
+        return JSONResponse(status_code=404, content={"code": 404, "message": "简历文件不存在，请将 PDF 放置于 uploads/resume/ 目录"})
+    return FileResponse(
+        path=file_path,
+        filename=settings.RESUME_PDF_NAME,
+        media_type="application/pdf",
+    )

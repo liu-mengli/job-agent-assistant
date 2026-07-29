@@ -351,8 +351,8 @@ async function scrollToBottom() {
               :disabled="!input.trim() || sending"
               @click="handleSend"
             >
-              <span v-if="!sending">&#8593;</span>
-              <span v-else class="spinner" />
+              <span v-show="!sending" class="arrow-icon">&#8593;</span>
+              <span v-show="sending" class="spinner"></span>
             </button>
           </div>
         </div>
@@ -660,6 +660,7 @@ async function scrollToBottom() {
 }
 
 .send-btn {
+  position: relative;
   width: 40px;
   height: 40px;
   border-radius: 50%;
@@ -668,11 +669,16 @@ async function scrollToBottom() {
   color: #fff;
   font-size: 20px;
   cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   flex-shrink: 0;
   transition: background 0.15s, transform 0.15s;
+}
+
+.send-btn .arrow-icon,
+.send-btn .spinner {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(0deg);
 }
 
 .send-btn:hover:not(:disabled) {
@@ -686,6 +692,7 @@ async function scrollToBottom() {
 }
 
 .spinner {
+  display: inline-block;
   width: 16px;
   height: 16px;
   border: 2px solid rgba(255, 255, 255, 0.3);
@@ -697,7 +704,7 @@ async function scrollToBottom() {
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to { transform: translate(-50%, -50%) rotate(360deg); }
 }
 
 /* --- 右侧面板 --- */

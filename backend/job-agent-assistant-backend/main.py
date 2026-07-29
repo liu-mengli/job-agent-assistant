@@ -134,3 +134,8 @@ from fastapi.staticfiles import StaticFiles
 _kb_images_dir = os.path.join(settings.KB_UPLOAD_DIR, "images")
 os.makedirs(_kb_images_dir, exist_ok=True)
 app.mount("/static/kb-images", StaticFiles(directory=_kb_images_dir), name="kb_images")
+
+# 简历静态资源目录（图片 + PDF）
+_resume_dir = settings.RESUME_DIR
+os.makedirs(_resume_dir, exist_ok=True)
+app.mount("/static/resume", StaticFiles(directory=_resume_dir), name="resume_files")
