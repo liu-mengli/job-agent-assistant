@@ -24,7 +24,7 @@ watch(
   () => authStore.user,
   (u) => {
     if (!u) {
-      document.title = 'job-agent-assistant-frontend'
+      document.title = 'AI HR助手'
     } else if (u.role === 'admin') {
       document.title = 'AI 找工作助手'
     } else {
