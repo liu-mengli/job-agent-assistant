@@ -73,7 +73,7 @@ class Settings(BaseSettings):
     EMBEDDING_DEVICE: str = "cpu"
     UPLOAD_DIR: str = "uploads/resumes"
     RESUME_DIR: str = "uploads/resume"  # 简历展示静态资源目录
-    RESUME_PDF_NAME: str = "简历.pdf"  # 简历 PDF 文件名（可改）
+    RESUME_PDF_NAME: str = "附件简历_王文韬_Agent应用开发_四年经验.pdf"  # 简历 PDF 文件名（可改）
     CHUNK_SIZE: int = 500
     CHUNK_OVERLAP: int = 50
     RETRIEVAL_TOP_K: int = 5
